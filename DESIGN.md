@@ -2,6 +2,18 @@
 
 > 状态：讨论稿，记录当前已经确认的产品思路与推荐实现方案，不代表相关功能已经完成。
 
+## 0. 本 fork 的设计增量
+
+> 以下条目只存在于本 fork（`saber3818717531-sudo/xy-baibaohui`），上游没有；阅读正文时先看这里可快速定位差异。
+
+### 0.1 提示词规范与出图渠道解耦（v0.2.7）
+
+- 新增 `settings.autoTag.promptStyle`：`'auto' | 'comfyui' | 'nai'`，默认 `'auto'`（跟随出图渠道，老配置行为逐字节不变）。
+- 新增 `settings.autoTag.comfySpecNl`：**非** ComfyUI 后端选用 ComfyUI 规范时，独立控制是否产出自然语言 nl；ComfyUI 后端仍只看工作流预设的 `naturalLanguage`，不设第二个真相。
+- `autoTag/prompt.ts` 的 `effectivePromptStyle(options)` 是唯一判据，规范与思维链成对取，`naiCharPromptsOn` 为假时下游整链自动切到单串那一支。
+- 背景：NAI 协议 + ComfyUI 系底模的兼容站会把 `char_captions` 压平成单串送进工作流；NAI 规范禁止的邻接绑定反而成为唯一可用的多角色区分手法，身份 tag 的圆括号必须按 ComfyUI 口径转义。
+- 面板入口：NAI 渠道页 →「生成提示词规范」。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：
@@ -165,6 +177,7 @@ ST 完成新的 AI 正文
 
 - 系统职责提示词：定义判断标准、输出格式和安全边界。
 - 生图提示词规则：定义目标画风、tag 语言、角色一致性要求等。
+- 规范选择与出图渠道解耦（本 fork）：`promptStyle` 决定用哪套规范（ComfyUI 单串 / NAI Base+Character），默认跟随渠道；详见 §0.1。
 - 破限/附加提示词：由用户自行填写，可以关闭。
 - 输出格式约束：通常由插件维护，不建议用户完全删除。
 
@@ -387,6 +400,7 @@ ComfyUI 使用 `Save (API Format)` 导出的完整工作流 JSON。插件不需�
 ### 生图后端
 
 - 默认后端。
+- 提示词规范选择（本 fork）：`promptStyle`（auto / comfyui / nai）与出图渠道解耦；`comfySpecNl` 在非 ComfyUI 后端走 ComfyUI 规范时独立控制 nl；详见 §0.1。
 - ComfyUI 地址与请求方式。
 - ComfyUI API 工作流 JSON。
 - 后续 NAI / WebUI 各自配置。

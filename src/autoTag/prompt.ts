@@ -33,14 +33,39 @@ import {
 } from '@/state/settings';
 
 /**
- * 按默认后端取 tag 书写规范:
+ * 本轮自动 tag 用哪套提示词规范。
+ *
+ * 与出图渠道**解耦**(见 settings.ts 的 PromptStyle 注释):'auto' 仍跟随 defaultBackend,
+ * 与旧版逐字节一致;显式选了 comfyui / nai 就压过渠道。存在的理由是「NAI 协议 +
+ * ComfyUI 系底模」这类兼容站——它把 char_captions 压平成单串再送进工作流,NAI 规范
+ * 明令禁止的邻接绑定反而是那里唯一可用的多角色区分手法;身份 tag 也得按 ComfyUI 口径
+ * 转义圆括号(裸括号会被 CLIPTextEncode 当权重语法,身份 tag 当场被拆散)。
+ *
+ * 返回 '' 表示该后端没有专属规范(webui 等),此时不占消息位。
+ * ⚠ 规范与思维链必须成对取(两者共用本函数):思维链的槽位块要填的字段,得在同一份
+ * 规范里有判据和词表,混搭会让 AI 被要求填规范从未教过的东西。
+ */
+export function effectivePromptStyle(options?: Pick<AutoTagSettings, 'promptStyle'>): 'comfyui' | 'nai' | '' {
+  // 显式传入的 options 优先(runner 传的 settings.autoTag 与全局本就是同一对象;
+  // 测试与别的调用方则可不经全局直接指定)。缺省回落全局,与 defaultBackend 同一读法。
+  const style = options?.promptStyle ?? settings.autoTag.promptStyle;
+  if (style === 'comfyui' || style === 'nai') return style;
+  if (settings.defaultBackend === 'comfyui') return 'comfyui';
+  if (settings.defaultBackend === 'nai') return 'nai';
+  return '';
+}
+
+/**
+ * 按生效规范取 tag 书写规范:
  * - comfyui → comfySpec(留空回落内置默认);{{nl}} 宏按自然语言开关展开/置空,
  *   自定义内容不含宏时开启开关会把自然语言规范追加在末尾(防止开关静默失效)。
- * - nai → naiSpec(留空回落内置默认 DEFAULT_NAI_SPEC)。
- * - webui → 暂不附加。
+ * - nai → naiV5Spec(留空回落内置默认);4.5 以下的单串版 naiSpec 随旧模型下线
+ *   已不可达,保留只为不动存量键与回归锁(见 settings.ts 的同名常量注释)。
+ * - '' → 暂不附加。
  */
 function backendPromptSpec(options: AutoTagSettings, nlOn: boolean, naiCharPromptsOn: boolean): string {
-  if (settings.defaultBackend === 'comfyui') {
+  const style = effectivePromptStyle(options);
+  if (style === 'comfyui') {
     const template = (options.prompts?.comfySpec ?? '').trim() || DEFAULT_COMFY_SPEC;
     const nlSpec = nlOn ? DEFAULT_COMFY_NL_SPEC : '';
     const resolved = template.includes('{{nl}}')
@@ -51,7 +76,7 @@ function backendPromptSpec(options: AutoTagSettings, nlOn: boolean, naiCharPromp
     // 宏置空后可能留下连续空行,折叠掉
     return resolved.replace(/\n{3,}/g, '\n\n').trim();
   }
-  if (settings.defaultBackend === 'nai') {
+  if (style === 'nai') {
     return naiCharPromptsOn
       ? (options.prompts?.naiV5Spec ?? '').trim() || DEFAULT_NAI_V5_SPEC
       : (options.prompts?.naiSpec ?? '').trim() || DEFAULT_NAI_SPEC;
@@ -60,15 +85,15 @@ function backendPromptSpec(options: AutoTagSettings, nlOn: boolean, naiCharPromp
 }
 
 /**
- * 按默认后端取思维链,与 backendPromptSpec 一一配对。
+ * 按生效规范取思维链,与 backendPromptSpec 一一配对(同一个 effectivePromptStyle)。
  *
- * 拆成三份是因为思维链的槽位块要求填的每个字段,都得在同后端规范里有判据和词表:
- * V5 的规范讲的是 Base + Character Prompts,没有景别词表、没有横竖判据,也明令禁止
+ * 拆成三份是因为思维链的槽位块要求填的每个字段,都得在同规范里有判据和词表:
+ * NAI 那份讲的是 Base + Character Prompts,没有景别词表、没有横竖判据,也明令禁止
  * 邻接绑定——共用一份 ComfyUI 口径的思维链会让它被要求填规范从未教过的东西。
  * webui 暂无专属规范,回落 comfy 那份(该后端尚未接入)。
  */
 function backendThinkingPrompt(options: AutoTagSettings, naiCharPromptsOn: boolean): string {
-  if (settings.defaultBackend === 'nai') {
+  if (effectivePromptStyle(options) === 'nai') {
     return naiCharPromptsOn
       ? (options.prompts?.naiV5Thinking ?? '').trim() || DEFAULT_NAI_V5_THINKING
       : (options.prompts?.naiThinking ?? '').trim() || DEFAULT_NAI_THINKING;
@@ -132,14 +157,24 @@ export async function buildAutoTagMessages(
     Promise.resolve(fetchUserPersona(context)),
   ]);
 
-  // 自然语言模式:默认后端为 ComfyUI 且当前工作流开启「生成自然语言」。
-  // 开启后协议变为 tag/nl 两键——自然语言是配合短 tag 用的,不是替代。
-  // 两项都取自同一个当前预设:切工作流即同时切走自然语言与动态负面词的口径。
+  // 规范口径由 promptStyle 定(默认 auto = 跟随出图渠道,老行为逐字节不变)。
+  // naiCharPromptsOn 是整条链路的总闸:它为假时下游的示例结构、contentRule、
+  // 库照抄规则、多人绑定规则、建档 nl 校验全部自动走 ComfyUI 单串那一支。
+  const style = effectivePromptStyle(options);
+  const naiCharPromptsOn = style === 'nai' && naiSupportsCharacterPrompts(settings.nai.model);
   const comfyOn = settings.defaultBackend === 'comfyui';
-  const naiCharPromptsOn =
-    settings.defaultBackend === 'nai' && naiSupportsCharacterPrompts(settings.nai.model);
   const comfyPreset = comfyOn ? activeComfyPreset() : null;
-  const nlOn = !!comfyPreset?.naturalLanguage || naiCharPromptsOn;
+  // 自然语言开关,三个来源按优先级:
+  // 1) NAI 规范恒产 nl(4.5/V5 的 Base 与每个 Character Prompt 都吃自然语言);
+  // 2) ComfyUI 后端跟当前工作流预设走(与动态负面词同一口径:两项都取自同一预设,
+  //    切工作流就一起切走,不会出现「换了工作流 nl 还开着」);
+  // 3) 用 ComfyUI 规范但后端不是 ComfyUI(典型:NAI 兼容站)-> 没有工作流可依,
+  //    由 autoTag.comfySpecNl 独立开关决定(Anima/Flux 这类底模吃自然语言,那里需要它)。
+  const nlOn = naiCharPromptsOn
+    ? true
+    : comfyPreset
+      ? !!comfyPreset.naturalLanguage
+      : style === 'comfyui' && options.comfySpecNl;
   // 动态负面词门槛:custom 模式看工作流是否含 %negative_prompt%;
   // simple 模式由模板决定(Flux 无真实负面输入,请求了也没地方写)。
   let negativeOn = false;

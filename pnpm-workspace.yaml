@@ -1,0 +1,4 @@
+# pnpm 11 默认拦截依赖的安装脚本;esbuild 需显式放行,
+# 否则 `pnpm install` 报 ERR_PNPM_IGNORED_BUILDS、`pnpm test` 的依赖校验跟着失败。
+allowBuilds:
+  esbuild: true

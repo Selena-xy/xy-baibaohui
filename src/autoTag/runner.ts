@@ -8,7 +8,7 @@ import {
 } from '@/autoTag/charAnchors';
 import { prepareTargetText } from '@/autoTag/clean';
 import { beginGeneration, clearGeneration, consumeGeneration } from '@/autoTag/generationGate';
-import { buildAutoTagMessages } from '@/autoTag/prompt';
+import { buildAutoTagMessages, effectivePromptStyle } from '@/autoTag/prompt';
 import { rebaseImagePositions, type RebaseReport } from '@/autoTag/rebase';
 import {
   BBI_CHAR_EXTRA_KEY,
@@ -300,8 +300,11 @@ async function runForFloor(floor: number, opts: RunOptions = {}): Promise<void> 
             settings.autoTag.minImages,
             settings.autoTag.maxImages,
           );
+          // 只有真吃 Character Prompts 的后端才要求建档带 nl;用 ComfyUI 规范时
+          // (含把 char_captions 压平成单串的 NAI 兼容站)固定外貌本来就写在单串 tag 里,
+          // nl 不是必需——照旧抛错只会让能用的输出被无谓地重试掉。
           if (
-            settings.defaultBackend === 'nai' &&
+            effectivePromptStyle(settings.autoTag) === 'nai' &&
             naiSupportsCharacterPrompts(settings.nai.model) &&
             candidate.changes.some(change => change.field === 'new' && !change.nl?.trim())
           ) {

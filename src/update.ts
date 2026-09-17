@@ -8,7 +8,11 @@ import { PLUGIN_VERSION } from '@/version';
 import { reactive } from 'vue';
 
 const CURRENT_VERSION = PLUGIN_VERSION;
-const REMOTE_MANIFEST_URL = 'https://raw.githubusercontent.com/baibai-git/ST-BaiBai-Image/main/manifest.json';
+// ⚠ 本 fork 自己的更新源,不再指向上游 baibai-git/ST-BaiBai-Image。
+// 指回上游等于让「检查更新」用柏柏的原版覆盖掉这里的定制改动,
+// 故与 manifest.json 的 homePage 一同指向本 fork 仓库,改仓库名时两处要一起动。
+const REMOTE_MANIFEST_URL =
+  'https://raw.githubusercontent.com/saber3818717531-sudo/xy-baibaohui/main/manifest.json';
 
 export const updateState = reactive({
   current: CURRENT_VERSION,

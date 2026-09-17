@@ -65,6 +65,8 @@ describe('auto tag prompt', () => {
       maxImages: 3,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts({ jailbreak: '附加规则' }),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -110,6 +112,8 @@ describe('auto tag prompt', () => {
       maxImages: 4,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -127,6 +131,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(
@@ -171,6 +177,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
 
@@ -204,6 +212,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -307,6 +317,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts({ comfyThinking: '自定义清单', prefill: 'custom>' }),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -326,6 +338,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts({
         comfyThinking: 'COMFY-CHECKLIST',
         naiThinking: 'NAI-CHECKLIST',
@@ -376,6 +390,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -448,6 +464,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -510,6 +528,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -579,6 +599,8 @@ describe('auto tag prompt', () => {
         maxImages: 2,
         retryCount: 1,
         autoGenerate: true,
+        promptStyle: 'auto',
+        comfySpecNl: false,
         prompts: prompts(),
       };
       const oldBackend = settings.defaultBackend;
@@ -628,6 +650,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -668,6 +692,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -709,6 +735,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const library = '【角色固定外貌库(系统维护)】\n小雪: 1girl, long silver hair';
@@ -733,6 +761,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -750,6 +780,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(
@@ -775,6 +807,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -810,6 +844,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -845,6 +881,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -883,6 +921,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -917,6 +957,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -959,6 +1001,8 @@ describe('auto tag prompt', () => {
       maxImages: 2,
       retryCount: 1,
       autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -979,6 +1023,132 @@ describe('auto tag prompt', () => {
       settings.defaultBackend = oldBackend;
       preset.mode = oldMode;
       preset.simple.template = oldTemplate;
+    }
+  });
+});
+
+describe('提示词规范与出图渠道解耦', () => {
+  // 可选模型只剩 4.5/V5,任取一条作代表;它决定 naiSupportsCharacterPrompts。
+  const V5_MODEL = 'nai-diffusion-5-full';
+
+  function autoOptions(promptStyle: AutoTagSettings['promptStyle'], comfySpecNl = false): AutoTagSettings {
+    return {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle,
+      comfySpecNl,
+      prompts: prompts(),
+    };
+  }
+
+  /** 跑一次并拼出全部消息文本(规范/思维链/协议示例都在 system/user 里)。 */
+  async function run(options: AutoTagSettings): Promise<string> {
+    const messages = await buildAutoTagMessages(context(), 1, options, null);
+    return messages.map(m => m.content).join('\n');
+  }
+
+  it('NAI 兼容站可强制走 ComfyUI 单串规范:协议退回单串、无 characters、邻接绑定生效', async () => {
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      // 出图后端是 NAI(典型:NAI 兼容站),但规范强制 ComfyUI
+      settings.defaultBackend = 'nai';
+      settings.nai.model = V5_MODEL;
+      const text = await run(autoOptions('comfyui'));
+
+      expect(text).toContain('【ComfyUI 提示词规范】');
+      expect(text).not.toContain('[NovelAI 4.5/V5 Prompt Specification]');
+      // 思维链跟着规范走,不串门
+      expect(text).toContain('核心动作、景别、表情、视线、场景、环境光、size 七项永远不得为 "-"');
+      expect(text).not.toContain('V5 的一张图 = 一个 Base 块 + 每个本图可见的个体角色各一块');
+      // 单串规范的多人手法是邻接绑定(NAI 那份明令禁止它)
+      expect(text).toContain('邻接绑定');
+      // 协议示例退回单串形态:没有 characters 数组
+      expect(text).not.toContain('"characters"');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
+  });
+
+  it('ComfyUI 后端也可强制走 NAI 规范(反向解耦同样成立)', async () => {
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'comfyui';
+      settings.nai.model = V5_MODEL;
+      const text = await run(autoOptions('nai'));
+
+      expect(text).toContain('[NovelAI 4.5/V5 Prompt Specification]');
+      expect(text).not.toContain('【ComfyUI 提示词规范】');
+      expect(text).toContain('V5 的一张图 = 一个 Base 块 + 每个本图可见的个体角色各一块');
+      // NAI 规范的协议示例带 characters[]
+      expect(text).toContain('"characters"');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
+  });
+
+  it('非 ComfyUI 后端用 ComfyUI 规范时,nl 由 comfySpecNl 独立控制', async () => {
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'nai';
+      settings.nai.model = V5_MODEL;
+
+      const withNl = await run(autoOptions('comfyui', true));
+      expect(withNl).toContain('nl（JSON 的 nl 键）');
+
+      const withoutNl = await run(autoOptions('comfyui', false));
+      expect(withoutNl).not.toContain('nl（JSON 的 nl 键）');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
+  });
+
+  it('ComfyUI 后端下 nl 仍由工作流预设决定,comfySpecNl 不参与(避免第二真相)', async () => {
+    const oldBackend = settings.defaultBackend;
+    const preset = activeComfyPreset();
+    const oldNaturalLanguage = preset.naturalLanguage;
+    try {
+      settings.defaultBackend = 'comfyui';
+      // 显式选 ComfyUI 规范也不看 comfySpecNl:那里唯一口径是预设的 naturalLanguage
+      preset.naturalLanguage = false;
+      const off = await run(autoOptions('comfyui', true));
+      expect(off).not.toContain('nl（JSON 的 nl 键）');
+
+      preset.naturalLanguage = true;
+      const on = await run(autoOptions('comfyui', false));
+      expect(on).toContain('nl（JSON 的 nl 键）');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      preset.naturalLanguage = oldNaturalLanguage;
+    }
+  });
+
+  it('promptStyle 缺省 auto 时行为与解耦前逐字节一致:跟随出图渠道', async () => {
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'nai';
+      settings.nai.model = V5_MODEL;
+      const naiText = await run(autoOptions('auto'));
+      expect(naiText).toContain('[NovelAI 4.5/V5 Prompt Specification]');
+      expect(naiText).toContain('"characters"');
+
+      settings.defaultBackend = 'comfyui';
+      const comfyText = await run(autoOptions('auto'));
+      expect(comfyText).toContain('【ComfyUI 提示词规范】');
+      expect(comfyText).not.toContain('"characters"');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
     }
   });
 });

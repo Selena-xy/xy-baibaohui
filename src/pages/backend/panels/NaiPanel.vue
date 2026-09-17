@@ -61,11 +61,29 @@ import {
   settings,
   type NaiArtistPreset,
   type NaiVibe,
+  type PromptStyle,
 } from '@/state/settings';
 import { computed, nextTick, onMounted, ref } from 'vue';
 
 /** 本渠道是否为当前出图渠道;「使用此渠道」按钮与设置页选择器、页签徽标同属一个开关。 */
 const inUse = computed(() => settings.defaultBackend === 'nai');
+
+/** 生图提示词规范可选项(与出图渠道解耦,见 settings.ts 的 PromptStyle 注释)。 */
+const PROMPT_STYLE_OPTIONS: { value: string; label: string }[] = [
+  { value: 'auto', label: '跟随出图渠道' },
+  { value: 'comfyui', label: 'ComfyUI 规范' },
+  { value: 'nai', label: 'NAI 规范' },
+];
+
+/**
+ * 是否显示「生成自然语言(nl)」独立开关:
+ * - ComfyUI 后端下 nl 由当前工作流预设的 naturalLanguage 决定,不显示本开关;
+ * - 只有「出图后端不是 ComfyUI、却选了 ComfyUI 规范」时才需要它
+ *   (典型:NAI 兼容站,底层是 Anima/Flux 这类吃自然语言的 ComfyUI 系底模)。
+ */
+const showComfySpecNl = computed(
+  () => settings.defaultBackend !== 'comfyui' && settings.autoTag.promptStyle === 'comfyui',
+);
 
 const testing = ref(false);
 const showKey = ref(false);
@@ -755,7 +773,7 @@ async function removeVibe(vibe: NaiVibe) {
             v-else
             class="bbi-btn conn-use"
             type="button"
-            title="tag 书写规范会切到 NAI"
+            title="提示词规范默认跟随出图渠道;已在「生成提示词规范」里显式选择时以所选为准"
             @click="settings.defaultBackend = 'nai'"
           >
             使用此渠道出图
@@ -921,6 +939,38 @@ async function removeVibe(vibe: NaiVibe) {
         </p>
       </Collapsible>
 
+      <Collapsible title="生成提示词规范" :open="false">
+        <div class="bbi-field">
+          <div class="bbi-field-head">
+            <span class="bbi-field-label">提示词规范</span>
+          </div>
+          <BbiSelect
+            class="bbi-select"
+            :model-value="settings.autoTag.promptStyle"
+            :options="PROMPT_STYLE_OPTIONS"
+            aria-label="提示词规范"
+            @update:model-value="v => (settings.autoTag.promptStyle = v as PromptStyle)"
+          />
+          <p class="bbi-field-hint">
+            决定自动 tag 用哪套书写规范，与「出图渠道」解耦。默认跟随出图渠道；
+            NAI 兼容站若底层是 ComfyUI 系底模（Anima / Flux 等），请选「ComfyUI 规范」——
+            那边 NAI 规范禁止的邻接绑定才是唯一能区分多角色的手法，身份 tag 的圆括号
+            也必须按 ComfyUI 口径转义。
+          </p>
+        </div>
+
+        <div v-if="showComfySpecNl" class="bbi-field">
+          <label class="bbi-switch-row">
+            <span class="bbi-field-label">生成自然语言（nl）</span>
+            <input v-model="settings.autoTag.comfySpecNl" type="checkbox" class="bbi-checkbox" />
+          </label>
+          <p class="bbi-field-hint">
+            在单串 tag 之外再产出一段完整画面的英文自然语言，与 tag 一起发给后端。
+            Anima / Flux 这类底模吃自然语言，建议开启；纯 danbooru tag 底模可关。
+          </p>
+        </div>
+      </Collapsible>
+
       <Collapsible title="默认参数" :open="false">
         <!-- 语义配对紧凑行:双字段行两列、数字参数行四列;说明统一收进行下的一行 hint -->
         <div class="bbi-field">
@@ -971,6 +1021,10 @@ async function removeVibe(vibe: NaiVibe) {
           </div>
         </div>
         <p class="bbi-field-hint">竖屏用于单人、特写、立绘;横屏用于群像、远景、全景;方向由自动 tag 判定。</p>
+        <p class="bbi-field-hint">
+          对接第三方 NAI 兼容站时，站点可能忽略具体像素、只按方向 clamp（例如竖屏固定
+          920×1536 / 横屏 1536×920 / 方图 1024×1024），以实际出图为准。
+        </p>
 
         <div class="be-row">
           <div class="bbi-field">

@@ -115,8 +115,10 @@ interface TagPromptMeta {
   macros: { token: string; desc: string }[];
 }
 
-// 规范与思维链按后端成对排列:两者必须配对使用(思维链槽位要填的字段,
-// 得在同后端规范里有判据和词表),列在一起是为了改一个时能看见另一个。
+// 规范与思维链按规范成对排列:两者必须配对使用(思维链槽位要填的字段,
+// 得在同规范里有判据和词表),列在一起是为了改一个时能看见另一个。
+// 用哪套规范由「提示词规范」开关决定(NAI 渠道页),默认跟随出图渠道,
+// 与出图渠道解耦——NAI 兼容站可以走 ComfyUI 那份单串规范。
 // 不按当前后端过滤——过滤会让「现在用的是哪份」变成隐式状态,反而更难排查。
 //
 // ⚠ NAI 只列一对,存的是 naiV5Spec / naiV5Thinking(键名带 V5 是历史包袱,见 settings.ts)。
@@ -133,21 +135,21 @@ const TAG_PROMPT_METAS: TagPromptMeta[] = [
   {
     key: 'naiV5Spec',
     label: 'NAI \u89c4\u8303',
-    hint: '\u9ed8\u8ba4\u540e\u7aef\u4e3a NAI \u65f6\u62fc\u8fdb\u81ea\u52a8 tag \u8bf7\u6c42\uff0c\u5b9a\u4e49 Base Prompt\u3001\u539f\u751f Character Prompts \u4e0e\u82f1\u6587\u81ea\u7136\u8bed\u8a00\uff08nl \u4e00\u5f8b\u5199\u82f1\u6587\uff09\u30024.5 \u4e0e V5 \u5171\u7528\u8fd9\u4e00\u4efd\uff1achar_captions \u672c\u5c31\u662f v4 \u65f6\u4ee3\u7684\u534f\u8bae\uff0c\u4e24\u4ee3\u5199\u6cd5\u53e3\u5f84\u76f8\u540c\u3002\u7559\u7a7a\u7528\u5185\u7f6e\u9ed8\u8ba4\u3002',
+    hint: '\u8d70 NAI \u89c4\u8303\u65f6\u62fc\u8fdb\u81ea\u52a8 tag \u8bf7\u6c42\uff0c\u5b9a\u4e49 Base Prompt\u3001\u539f\u751f Character Prompts \u4e0e\u82f1\u6587\u81ea\u7136\u8bed\u8a00\uff08nl \u4e00\u5f8b\u5199\u82f1\u6587\uff09\u30024.5 \u4e0e V5 \u5171\u7528\u8fd9\u4e00\u4efd\uff1achar_captions \u672c\u5c31\u662f v4 \u65f6\u4ee3\u7684\u534f\u8bae\uff0c\u4e24\u4ee3\u5199\u6cd5\u53e3\u5f84\u76f8\u540c\u3002\u7559\u7a7a\u7528\u5185\u7f6e\u9ed8\u8ba4\u3002',
     builtin: DEFAULT_NAI_V5_SPEC,
     macros: [],
   },
   {
     key: 'naiV5Thinking',
     label: 'NAI 思维链',
-    hint: '默认后端为 NAI 时使用的输出前思考清单，作为 system 压在任务消息之后（解析时会自动剥掉思考块）。槽位块是「Base 块 + 每角色一块」，对应 characters[] 协议，与 ComfyUI 那份的单串形态不通用。与「NAI 规范」配套。留空用内置默认。',
+    hint: '走 NAI 规范时使用的输出前思考清单，作为 system 压在任务消息之后（解析时会自动剥掉思考块）。槽位块是「Base 块 + 每角色一块」，对应 characters[] 协议，与 ComfyUI 那份的单串形态不通用。与「NAI 规范」配套。留空用内置默认。',
     builtin: DEFAULT_NAI_V5_THINKING,
     macros: [],
   },
   {
     key: 'comfySpec',
     label: 'ComfyUI 规范',
-    hint: '默认后端为 ComfyUI 时拼进自动 tag 请求，约束 tag / nl 的书写规范。留空用内置默认。',
+    hint: '走 ComfyUI 规范时拼进自动 tag 请求，约束 tag / nl 的书写规范。留空用内置默认。',
     builtin: DEFAULT_COMFY_SPEC,
     macros: [
       {
@@ -159,7 +161,7 @@ const TAG_PROMPT_METAS: TagPromptMeta[] = [
   {
     key: 'comfyThinking',
     label: 'ComfyUI 思维链',
-    hint: '默认后端为 ComfyUI 时使用的输出前思考清单，作为 system 压在任务消息之后（解析时会自动剥掉思考块）。与「ComfyUI 规范」配套。留空用内置默认。',
+    hint: '走 ComfyUI 规范时使用的输出前思考清单，作为 system 压在任务消息之后（解析时会自动剥掉思考块）。与「ComfyUI 规范」配套。留空用内置默认。',
     builtin: DEFAULT_COMFY_THINKING,
     macros: [],
   },

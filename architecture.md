@@ -239,6 +239,17 @@ runForFloor(floor, opts)
 键与常量都刻意保留(不动存量 settings、不动旧模型标识的协议分支与回归锁),
 但**改 NAI 规范/思维链一律改 `DEFAULT_NAI_V5_*` 那一对**,别去改看着名字更正的那份。
 
+**规范与出图渠道是两个独立维度(`settings.autoTag.promptStyle`,默认 `'auto'` = 跟随渠道)**:
+`effectivePromptStyle(options)`(autoTag/prompt.ts)是唯一判据,`backendPromptSpec` /
+`backendThinkingPrompt` / `naiCharPromptsOn`(链路 A 的整条分支总闸:示例结构、contentRule、
+库照抄规则、多人绑定规则都挂在它下面)/ runner 建档 nl 校验全部读它。
+存在理由:「NAI 协议 + ComfyUI 系底模」的兼容站(如 latent.moe / Anima)会把
+`char_captions` 压平成单串送进工作流——那里 NAI 规范明令禁止的邻接绑定反而是唯一可用的
+多角色区分手法,身份 tag 也必须按 ComfyUI 口径转义圆括号(裸括号会被 CLIPTextEncode
+当权重语法,身份 tag 当场被拆散)。这类站点在 NAI 渠道页把规范切到 `comfyui` 即可;
+`nl` 由 `autoTag.comfySpecNl` 独立控制(ComfyUI 后端下仍由工作流预设的 `naturalLanguage`
+决定,不看这个开关,避免出现第二真相)。
+
 ## 6. 链路 B:楼层卡片与出图(floor/ + backends/)
 
 **显示原理(st/imageTagRegex.ts)**:托管正则 `bbi-image-tag-slot`(markdownOnly)把
@@ -514,6 +525,11 @@ genState 同构(chatId|messageId|swipeId|seq),重建后按 key 认领。手动�
   (**normalize 逐字段容错 + 存量迁移**,如 resolution→横竖两格、webui 隐藏迁移);
   `ready` 守门标志防默认值覆盖服务器设置;deep watch → 防抖 `saveSettingsDebounced()`。
   订阅者用 `onSettingsReady(cb)` 等 hydrate 完成(如 ui.ts 回灌主题)。
+- **提示词规范**:`settings.autoTag.promptStyle`(`'auto' | 'comfyui' | 'nai'`,默认 `'auto'`)+
+  `comfySpecNl`(布尔,默认 false)。与出图渠道解耦,判据与理由见 §5 末段;
+  面板入口在 NAI 渠道页「生成提示词规范」。纯加法迁移:存量配置无这两个键,
+  normalize 回落 `'auto'` / `false`,升级后提示词零变化
+  (`settings.promptStyleMigration.test.ts` 锁死;写坏的取值也回落默认,不留第三态)。
 - **ComfyUI 工作流库**:`settings.comfyui.workflows`(`ComfyWorkflowPreset[]`)+ `activeWorkflowId`。
   - 一条预设 = 名字 + `mode`(custom/simple 互斥)+ 工作流 JSON + `simple` 参数 + `naturalLanguage` + 横竖尺寸。
     这些跟着工作流走而非留在渠道级,因为它们是**底模的属性**(Illustrious 要短 tag + 832×1216,
@@ -788,7 +804,7 @@ API 对象 `Object.freeze`,一个插件改不动下一个插件拿到的东西�
 | 设置窗口 UI | src/pages/settings/index.vue |
 | 提示词内置默认(破限/规范/思维链/预填充) | src/state/settings.ts 的 `DEFAULT_*` 常量(NAI 那对是 `DEFAULT_NAI_V5_*`) |
 | 自动 tag 触发条件 / 去重 / 重试 | src/autoTag/runner.ts + generationGate.ts(生成门配对) |
-| 发给 LLM 的消息组装(顺序/内容) | src/autoTag/prompt.ts(NAI 一律走 DEFAULT_NAI_V5_SPEC:Base+Character 双提示) |
+| 发给 LLM 的消息组装(顺序/内容) | src/autoTag/prompt.ts(规范由 effectivePromptStyle 决定,与出图渠道解耦;NAI 规范走 DEFAULT_NAI_V5_SPEC:Base+Character 双提示) |
 | LLM 输出协议(JSON 形状/位置 ID/tag 格式) | src/autoTag/protocol.ts |
 | 世界书/角色卡/persona 装配 | src/autoTag/context.ts |
 | 柏宝书状态读取 | src/autoTag/bookMemory.ts |

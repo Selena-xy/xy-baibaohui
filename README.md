@@ -70,7 +70,7 @@ https://github.com/saber3818717531-sudo/xy-baibaohui
 - **提示词规范与出图渠道解耦（v0.2.7）**：新增「生成提示词规范」开关，可在 NAI 渠道页把自动 tag 的书写规范从 NAI 切到 ComfyUI（单串 tag + 邻接绑定 + 圆括号转义），专门适配「NAI 协议 + ComfyUI 底层」的第三方站（如 latent.moe / Anima）。
 - **生成自然语言独立开关**：非 ComfyUI 后端选用 ComfyUI 规范时，可单独决定是否附带自然语言描述（Anima / Flux 类底模建议开启）。
 - **内置提示词调优（v0.2.7）**：ComfyUI 规范/思维链补上显式 NSFW 解剖落点（写具体部位并邻接绑定，不用 `nsfw`/`nude`/`sex` 泛化词）；开启自然语言时 tag 精简到 20～30 个，细节交给 nl（Qwen 链路底模更吃自然语言）；思维链 B 段拆出【一次性】角色并明确其入画写法；表情词表补 7 个稳定词（`winking`、`glaring`、`staring`、`tongue out`、`biting lip`、`drooling`、`sweat drop`）。
-- **实跑回归修正（v0.2.7）**：按真实聊天导出逐图核对后修掉四类问题——禁止 `2people` 这类自造人数 tag；核心动作必须是 danbooru 短 tag 而不是英文长句（`man's hand pressing...` → `hand on another's waist`）；建档字段禁止写身高厘米数、气质/身份评价、临时发型（盘/扎发）与当前这身临时服装（cosplay/制服），`outfit` 没有长期招牌着装就留空；写进档案的 `fandom` 一律不带转义（转义只在落到画面 tag 时做），避免切回 NAI 规范时把反斜杠发给 NovelAI。
+- **实跑回归修正（v0.2.7）**：按真实聊天导出逐图核对后修掉四类问题——禁止 `2people` 这类自造人数 tag；核心动作必须是 danbooru 短 tag 而不是英文长句（`man's hand pressing...` → `hand on another's waist`）；建档字段禁止写身高厘米数、气质/身份评价、临时发型（盘/扎发）与当前这身临时服装（cosplay/制服），`outfit` 没有长期招牌着装就留空；`fields.fandom` 的存档形态与发给出图模型的保持一致（反斜杠不能丢，否则同人角色还原不稳）。
 - **更新源指向本仓库**：「检查更新」不会再把你带回上游原版。
 
 ---

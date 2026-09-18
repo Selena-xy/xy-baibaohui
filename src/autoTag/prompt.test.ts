@@ -310,10 +310,10 @@ describe('auto tag prompt', () => {
     expect(last.content).toBe('<thinking>');
   });
 
-  // 实跑回归(pingran 那份导出)暴露的四类问题,逐条钉死在文案里:
+  // 实跑回归(pingran 那份导出)暴露的问题,逐条钉死在文案里:
   // 1) 2people 是自造 tag(danbooru 没有) 2) 核心动作被写成英文长句
   // 3) 建档字段混进 178cm / professional cosplayer / 盘发 / cosplay 这身衣服
-  // 4) 库里的 fandom 被存成转义形态(转义必须只落在画面 tag 上)
+  // 4) 库里 fandom 必须与发给出图模型的是同一个转义形态(存档丢反斜杠 → 同人形象不稳)
   it('locks the run-regression fixes into the built-in prompts', async () => {
     const options: AutoTagSettings = {
       enabled: true,
@@ -347,10 +347,10 @@ describe('auto tag prompt', () => {
       expect(all).toContain('盘发、扎发这类造型是临时状态，不算长期发型');
       expect(all).toContain('cosplay、制服、礼服等只在某段剧情里穿的服饰');
       expect(all).toContain('留空比写错安全');
-      // 4) 库里的 fandom 不带转义,转义只落在画面 tag 上
-      expect(all).toContain('写进档案的 fandom 一律不带转义');
-      expect(all).toContain('转义只在它落到画面 tag 时才做');
-      expect(all).toContain('写进档案 changes 的 fields.fandom 则**不带转义**');
+      // 4) 库里的 fandom 与落进画面 tag 的是同一个转义形态(存档不得丢反斜杠)
+      expect(all).toContain('写进档案的 fandom 就是最终发给 ComfyUI 的那个形态');
+      expect(all).toContain('存档时绝不把反斜杠去掉');
+      expect(all).toContain('写进档案 changes 的 fields.fandom 用同一个转义形态');
     } finally {
       settings.defaultBackend = oldBackend;
     }

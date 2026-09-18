@@ -30,7 +30,8 @@
 1. **`2people` 这类自造人数 tag**：danbooru 没有 `Npeople`，模型却在 6/8 张里额外补了个总数。规范与思维链人物槽都加「人数 tag 只用 danbooru 标准词（1girl / 1boy 1girl / 2girls），不要 2people」。
 2. **核心动作被写成英文长句**：实测出现 `man's hand pressing deep into woman's waist`、`man's fingers inserted into woman's pussy`、`man's hand tearing the crotch of woman's black pantyhose` 等 5/8 张。这类句子不是 danbooru tag、且与 nl 重复。规范加对照改法（→ `groping` / `hand on another's waist` / `fingering` / `torn pantyhose`），思维链核心动作槽与第三层自查同步收紧。
 3. **建档字段混入临时状态与不可渲染内容**：实测 `hair` 存成 `long silver hair in an elegant bun`（盘发是一次性造型，却被逐字照抄进 8/8 张图）、`outfit` 存成 cosplay 这身临时服装、`body` 存 `178cm`/`170cm+`、`extra` 存 `gentle handsome type`/`professional cosplayer`（气质评价与身份事实，画不出来）。建档规则拆出「字段值必须是 danbooru 画得出的英文词」「临时状态一律不写（点名临时发型与当前这身衣服）」「outfit 没有长期招牌着装就留空」三条；`hair` 的口径从「长度/发型」收紧为「长度」（避免模型把 bun 当长期发型）。
-4. **`fields.fandom` 被存成转义形态**：档案是跨规范共享的，NAI V5 规范与角色管理页都约定存**不带转义**的 `character name (copyright name)`，但 ComfyUI 侧只说了「画面 tag 要转义」、没说库里存哪种，模型便存了 `\(`。当前 `promptStyle='comfyui'` 下无害（ComfyUI 不照抄库里的 fandom），但切回 NAI 会把反斜杠原样发给 NovelAI。ComfyUI 规范与思维链补「写进档案的 fandom 一律不带转义，转义只在落到画面 tag 时做」。
+4. **`fields.fandom` 的形态：库里的存档值必须与发给出图模型的是同一个转义形态**。中途曾按「档案跨规范共享、NAI 侧要裸括号」的思路让 ComfyUI 侧存不带转义的 `character name (copyright name)`，但实跑反馈**反斜杠是出图侧的刚需**：库里一旦是裸括号，模型照抄库值时就把转义丢了，同人角色的还原立刻不稳。故改为明确「写进档案的 fandom 就是最终发给 ComfyUI 的那个形态，存档时绝不把反斜杠去掉」。
+   > 已知遗留（未修）：官方 NAI 需要**不带**转义的形态，且 NAI V5 规范会**逐字照抄** `fields.fandom`。因此若把 `promptStyle` 切到 `nai`，库里那个反斜杠会被原样发给 NovelAI。彻底解法是在消费侧按当前规范归一化（读时补/去转义），本轮未做。
 
 > 注：P6（8/8 张全 `medium shot`、取景无变化）经判断属于封闭场景下的合理选择，**刻意不改**。
 

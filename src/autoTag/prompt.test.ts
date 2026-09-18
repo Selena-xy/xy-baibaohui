@@ -254,8 +254,9 @@ describe('auto tag prompt', () => {
     expect(thinkingMsg?.content).toContain('首次出场就建档');
     expect(thinkingMsg?.content).toContain('不论他是否入选本次图片');
     expect(thinkingMsg?.content).toContain('建档在本楼全程有效');
-    // 建档的 hair 必须带长度/发型:只写颜色的旧措辞会让模型以 black hair 过关。
-    expect(thinkingMsg?.content).toContain('hair 必须同时带发色和长度/发型');
+    // 建档的 hair 必须带长度:只写颜色的旧措辞会让模型以 black hair 过关。
+    // (措辞从「长度/发型」收紧成「长度」——盘/扎这类造型是临时状态,不该进档案。)
+    expect(thinkingMsg?.content).toContain('hair 必须同时带发色和长度（');
     expect(thinkingMsg?.content).not.toContain('hair 与 eyes 都不得留空');
     // 白皙肤色词禁令(ComfyUI 默认肤色已够白,叠 pale skin 会白得失真):
     // 规范给禁令,思维链第三层给落笔前的检查位;tan/dark skin 是豁免项。
@@ -307,6 +308,52 @@ describe('auto tag prompt', () => {
     const last = messages[messages.length - 1];
     expect(last.role).toBe('assistant');
     expect(last.content).toBe('<thinking>');
+  });
+
+  // 实跑回归(pingran 那份导出)暴露的四类问题,逐条钉死在文案里:
+  // 1) 2people 是自造 tag(danbooru 没有) 2) 核心动作被写成英文长句
+  // 3) 建档字段混进 178cm / professional cosplayer / 盘发 / cosplay 这身衣服
+  // 4) 库里的 fandom 被存成转义形态(转义必须只落在画面 tag 上)
+  it('locks the run-regression fixes into the built-in prompts', async () => {
+    const options: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const all = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      // 1) 人数 tag 只准用 danbooru 标准词
+      expect(all).toContain('一律不要写 2people、3people 这类自造总数');
+      expect(all).toContain('不要 2people 这类自造总数');
+      expect(all).toContain('没有 2people 这种自造总数');
+      // 2) 核心动作必须是 danbooru 短 tag,句子留给 nl
+      expect(all).toContain('绝不允许把接触点那句话原样翻成英文塞进 tag');
+      expect(all).toContain("man's hand pressing deep into woman's waist");
+      expect(all).toContain('torn pantyhose');
+      expect(all).toContain('句子留给 nl');
+      // 3) 建档字段禁止项:数字/气质评价/临时发型/当前这身衣服
+      expect(all).toContain('身高体重等数字（178cm、50kg）');
+      expect(all).toContain('professional cosplayer');
+      expect(all).toContain('盘发、扎发这类造型是临时状态，不算长期发型');
+      expect(all).toContain('cosplay、制服、礼服等只在某段剧情里穿的服饰');
+      expect(all).toContain('留空比写错安全');
+      // 4) 库里的 fandom 不带转义,转义只落在画面 tag 上
+      expect(all).toContain('写进档案的 fandom 一律不带转义');
+      expect(all).toContain('转义只在它落到画面 tag 时才做');
+      expect(all).toContain('写进档案 changes 的 fields.fandom 则**不带转义**');
+    } finally {
+      settings.defaultBackend = oldBackend;
+    }
   });
 
   it('uses custom thinking/prefill when provided', async () => {

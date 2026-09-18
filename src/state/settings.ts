@@ -426,6 +426,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 1girl, long hair, school uniform, sitting by window, classroom, warm sunlight
 从重要到次要排列：人数/主体 → 镜头构图 → 外貌 → 服饰 → 动作姿态 → 表情视线 → 场景 → 光线氛围；单个画面控制在 40 个 tag 以内；当「生成自然语言」开启时精简到 20～30 个——tag 只留人数/主体/构图/发色瞳色/关键服装/核心动作/表情视线/场景光，其余细节交给 nl。
 动作姿态内部再排：本画面核心动作（谁做了什么、身体部位接触了什么）必须是动作区第一条独立短 tag；辅助姿态（坐着、站着、跪着等）排后面。同一动作词不得重复写两遍。
+核心动作**本身也必须写成 danbooru 短 tag，绝不允许把接触点那句话原样翻成英文塞进 tag**——中文点明接触点只是帮你选对词，选完那句话就丢掉。对照改法："man's hand pressing deep into woman's waist" → groping, hand on another's waist；"man's fingers inserted into woman's pussy" → fingering；"man's hand tearing the crotch of woman's black pantyhose" → torn pantyhose；"boy holding yellow grab handle" → holding strap；"girl leaning back against boy's chest" → leaning back, against another。完整句子一律留给 nl，tag 里只放模型认得的词。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
 - 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
@@ -437,9 +438,10 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 - ComfyUI 会把未转义圆括号当作权重语法，所以身份 tag 的括号必须转义。实际提示词形态为 character name \\(copyright name\\)；由于最终输出是 JSON，tag 字符串中必须写成 "character name \\\\(copyright name\\\\)"，JSON 解析后才会保留单个反斜杠。
 - 原创角色不写身份 tag；无法从角色卡、世界书或正文可靠确定作品时不得猜测作品名，按原创角色处理。
 - 角色固定外貌库条目的 fandom 字段只作档案记录，画图时不照抄它；同人身份 tag 一律按本规范现场判定并转义。
+- **写进档案的 fandom 一律不带转义**，格式为 character name (copyright name)：转义只在它落到画面 tag 时才做。档案是跨规范共享的，存了反斜杠会让切到 NAI 规范时把它原样发给 NovelAI，身份 tag 当场坏掉。
 
 多人画面（两人及以上）额外规则：
-- 人数 tag 必须明确（2girls、1boy 1girl 等）；缺了模型会漏画或多画。
+- 人数 tag 必须明确（2girls、1boy 1girl 等）；缺了模型会漏画或多画。人数 tag 只能用 danbooru 标准词，一律不要写 2people、3people 这类自造总数——danbooru 没有这个词，模型不认，只会白白占 token。
 - 构图词（medium shot、full body 等，只写一个）紧跟人数 tag 写在前面，把画面主体锁在角色身上。
 - 每个角色的硬特征（发色/瞳色/体型）并列写出，不要编号（girl1/girl2 模型不认识）。
 - 角色各自的颜色/服装/物件必须绑定到该角色的特征词上——模型靠相邻关系配对：写 "white dress on green hair girl, black dress on blue hair girl"，不要写成 "a white dress and a black dress" 这种无法分配的一堆。
@@ -527,6 +529,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 1girl, long hair, school uniform, sitting by window, classroom, warm sunlight
 从重要到次要排列：人数/主体 → 镜头构图 → 外貌 → 服饰 → 动作姿态 → 表情视线 → 场景 → 光线氛围；单个画面控制在 40 个 tag 以内。
 动作姿态内部再排：本画面核心动作（谁做了什么、身体部位接触了什么）必须是动作区第一条独立短 tag；辅助姿态（坐着、站着、跪着等）排后面。同一动作词不得重复写两遍。
+核心动作**本身也必须写成 danbooru 短 tag，绝不允许把接触点那句话原样翻成英文塞进 tag**——中文点明接触点只是帮你选对词，选完那句话就丢掉。对照改法："man's hand pressing deep into woman's waist" → groping, hand on another's waist；"man's fingers inserted into woman's pussy" → fingering；"man's hand tearing the crotch of woman's black pantyhose" → torn pantyhose；"boy holding yellow grab handle" → holding strap；"girl leaning back against boy's chest" → leaning back, against another。完整句子一律留给 nl，tag 里只放模型认得的词。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
 - 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
@@ -537,7 +540,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 NAI 对 danbooru 体系理解最好：人物多的画面务必写清数量 tag（1girl、2boys 等）；需要特定画风时可加艺术家/风格 tag。
 
 多人画面（两人及以上）额外规则：
-- 人数 tag 必须明确（2girls、1boy 1girl 等）；缺了模型会漏画或多画。
+- 人数 tag 必须明确（2girls、1boy 1girl 等）；缺了模型会漏画或多画。人数 tag 只能用 danbooru 标准词，一律不要写 2people、3people 这类自造总数——danbooru 没有这个词，模型不认，只会白白占 token。
 - 构图词（medium shot、full body 等，只写一个）紧跟人数 tag 写在前面，把画面主体锁在角色身上。
 - 每个角色的硬特征（发色/瞳色/体型）并列写出，不要编号（girl1/girl2 模型不认识）。
 - 角色各自的颜色/服装/物件必须绑定到该角色的特征词上——模型靠相邻关系配对：写 "white dress on green hair girl, black dress on blue hair girl"，不要写成 "a white dress and a black dress" 这种无法分配的一堆。
@@ -619,9 +622,10 @@ B. 角色清点与建档（具体建档字段与写法见任务协议，这里�
      · 【已建档】命中【角色固定外貌库】中的同名条目——只有名字实际列在该区块中才算已建档，世界书、角色卡、柏宝书或正文里的详细设定只是建档来源，不代表已经在库，不得凭印象宣称已在库；
      · 【本次建档】库里没有、但属于正式角色（有设定或持续参与剧情），首次出场就建档，不论他是否入选本次图片，本次输出 field:"new"；
      · 【一次性】正文只给了指称、没有设定、不持续参与剧情的一次性角色（店主、三年级队长）——不建档、不写 changes、不进库；入选画面时照常入画，把他当普通角色写进 tag 串，外貌按世界观一次补全，由正文指称 + 邻接绑定承担归属，绝不给他编造人名。
-   - 同一行里顺带判定原创还是同人：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，实际形态为 character name \\(copyright name\\)；最终 JSON 里要写成 "character name \\\\(copyright name\\\\)"，双反斜杠经 JSON 解析才保留单个反斜杠。
-   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度/发型（long black hair 行，只写 black hair 这种裸颜色不行），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
+   - 同一行里顺带判定原创还是同人：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，实际形态为 character name \\(copyright name\\)；最终 JSON 里要写成 "character name \\\\(copyright name\\\\)"，双反斜杠经 JSON 解析才保留单个反斜杠。写进档案 changes 的 fields.fandom 则**不带转义**（character name (copyright name)）——转义只在落画面 tag 时做。
+   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发这类造型是临时状态，不算长期发型），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
    - 对照角色库检查永久变化：染发、剪发、永久变身等写入 changes 并标出生效 P编号；假发、美瞳、湿发、光照变色等临时状态不写。即使 images 为空也不能跳过这一步。
+   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
 
 C. 服装时间线（每个在场角色一行：从 P 几起穿的是什么）
    - 按正文 P 位置维护每个角色的临时服装：正文未明确初始穿着时合理决定一次；没有穿脱、换装、衣物损坏或场景/时间跳跃就沿用上一状态，明确变化后从对应 P 位置起更新。
@@ -642,8 +646,8 @@ E. 选段
 每张图各写一块，把下面每个槽位都写出取值。行文形态随你，但七个槽位一个都不能少——漏掉任何一个都会让最终 tag 缺一块。
 
 ■ P<编号>
-  人物：<人数 tag + 在场角色名；无人物画面写 no humans>
-  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给英文 tag>
+  人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy 1girl / 2girls），不要 2people 这类自造总数；+ 在场角色名；无人物画面写 no humans>
+  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳上面的接触点>
   角色行（每个在场角色各一行）：<角色名>｜表情｜视线｜本镜头可见服装｜临时状态｜个人动作
   场景：<地点 + 画面里实际可见的关键道具>
@@ -664,7 +668,7 @@ E. 选段
 第三层｜落笔前自查（只核对，不预写答案）
 
 这一层只逐张核对下面几条，每点写一句结论即可。<thinking> 里禁止出现任何最终答案的草稿——不写完整 tag 串、不写完整 nl 句、更不要写出 JSON 对象或 "JSON:" 之类的标题。答案只在 </thinking> 之后出现一次，在思考里先写一遍等于把整份输出付两遍钱。核对完直接闭合 </thinking> 并输出 JSON：
-   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag。
+   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里没有英文句子或所有格短语（man's hand pressing... 这类），核心动作已落成 danbooru 短 tag；人数 tag 用的是 1boy 1girl / 2girls 这类标准词，没有 2people 这种自造总数。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
    - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。
    - 没有 pale skin、white skin、fair skin 这类白皙肤色词混进任何一张图（角色库字段里有也跳过不抄）：默认肤色已经够白，写了会白得发灰失真；角色真是晒黑/深肤色时用的 tan、dark skin 不在此列。
@@ -701,8 +705,9 @@ B. 角色清点与建档（具体建档字段与写法见任务协议，这里�
    - 通读目标正文，逐个列出实际在场且有名有姓的角色。不能只看最终入选图片里的人，也不能漏掉世界书、角色卡或柏宝书为其给出了设定的角色。
    - 每人写一行结论：命中的同名库条目，或本次 field:"new"。只有名字实际列在【角色固定外貌库】区块中的才算已建档——世界书、角色卡、柏宝书或正文里的详细设定只是建档来源，不代表已经在库，不得凭印象宣称已在库。库里没有、但属于正式角色（有设定或持续参与剧情）的，首次出场就建档，不论他是否入选本次图片；一次性无名路人不建。
    - 同一行里顺带判定原创还是同人：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，格式 character name (copyright name)，不转义圆括号，写在人数/构图之后、普通外貌之前。
-   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度/发型（long black hair 行，只写 black hair 这种裸颜色不行），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
+   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发这类造型是临时状态，不算长期发型），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
    - 对照角色库检查永久变化：染发、剪发、永久变身等写入 changes 并标出生效 P编号；假发、美瞳、湿发、光照变色等临时状态不写。即使 images 为空也不能跳过这一步。
+   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
 
 C. 服装时间线（每个在场角色一行：从 P 几起穿的是什么）
    - 按正文 P 位置维护每个角色的临时服装：正文未明确初始穿着时合理决定一次；没有穿脱、换装、衣物损坏或场景/时间跳跃就沿用上一状态，明确变化后从对应 P 位置起更新。
@@ -723,8 +728,8 @@ E. 选段
 每张图各写一块，把下面每个槽位都写出取值。行文形态随你，但七个槽位一个都不能少——漏掉任何一个都会让最终 tag 缺一块。
 
 ■ P<编号>
-  人物：<人数 tag + 在场角色名；无人物画面写 no humans>
-  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给英文 tag>
+  人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy 1girl / 2girls），不要 2people 这类自造总数；+ 在场角色名；无人物画面写 no humans>
+  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳上面的接触点>
   角色行（每个在场角色各一行）：<角色名>｜表情｜视线｜本镜头可见服装｜临时状态｜个人动作
   场景：<地点 + 画面里实际可见的关键道具>
@@ -783,8 +788,9 @@ B. 角色清点与建档（具体建档字段与写法见任务协议，这里�
    - 清点名单不是入画名单：这里列全是为了核对在场事实与建档，谁入镜由 E 段按主体和核心互动决定，【一次性】不因缺档被排除，任何角色也不因在场或已建档就必须入画。正文把一群人当作整体的（人群、士兵们、围观的学生），列成一行「人群」即可；选入镜头后才留在 Base，不占角色块，拿不准是个体还是一团时按一团处理。
    - 名字一律用原文（【已建档】【本次建档】两类）：field:"new" 建档的 name 必须与角色卡/世界书/柏宝书/正文中该角色的名字逐字相同，中文名写中文（小雪，不写 Xiaoxue 也不意译）；引用已建档角色时，characters[].name 与 tag/nl 里出现的名字同样照抄档案里的原名字，不得音译、翻译或变体——插件按名字逐字匹配，名字对不上档案或正文，锚定就会断开。【一次性】角色不参与任何匹配，用正文的指称原词作 name 即可，这条不适用于他。
    - 同一行里顺带判定原创还是同人（仅对【已建档】【本次建档】两类做）：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，格式 character name (copyright name)，不转义圆括号。身份 tag 必须写进档案：本次 field:"new" 建档的写进 fields.fandom；已建档但档案缺 fandom 的补一条 field:"fandom" 的 changes；档案已有 fandom 的直接照抄。画图时逐字放在该角色 characters[].tag 的首位，不得放进 Base。原创角色档案不写 fandom。【一次性】角色不判同人、不写 fandom。
-   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度/发型（long black hair 行，只写 black hair 这种裸颜色不行），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。【一次性】角色入画时同样要有发色与瞳色，只是补在他的角色块里、不进档案；未入画不补外貌，同一楼里他若出现在两张图，两张用同一套外貌。
+   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发这类造型是临时状态，不算长期发型），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。【一次性】角色入画时同样要有发色与瞳色，只是补在他的角色块里、不进档案；未入画不补外貌，同一楼里他若出现在两张图，两张用同一套外貌。
    - 对照角色库检查永久变化：染发、剪发、永久变身等写入 changes 并标出生效 P编号；假发、美瞳、湿发、光照变色等临时状态不写。即使 images 为空也不能跳过这一步。
+   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
 
 C. 服装时间线（B 段列出的【已建档】【本次建档】角色各一行：从 P 几起穿的是什么）
    - 按正文 P 位置维护每个角色的临时服装：正文未明确初始穿着时合理决定一次；没有穿脱、换装、衣物损坏或场景/时间跳跃就沿用上一状态，明确变化后从对应 P 位置起更新。

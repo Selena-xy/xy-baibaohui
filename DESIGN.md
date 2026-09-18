@@ -23,6 +23,17 @@
 3. **思维链 B 段拆出【一次性】角色**：与 NAI V5 思维链同构——【已建档】/【本次建档】/【一次性】三分类；【一次性】不建档不写 changes，入画时当普通角色写进 tag 串，外貌按世界观一次补全、不编造人名；第二层角色行与第三层自查同步。
 4. **表情词表 +7 个稳定词**：`winking`、`glaring`、`staring`、`tongue out`、`biting lip`、`drooling`、`sweat drop`（ComfyUI / NAI / NAI V5 三份同步），保留「未列出的词一律不许自创」的防呆边界。
 
+### 0.3 实跑回归修正（v0.2.7）
+
+拿一份真实聊天导出（`pingran`，8 张图 / 5 个 AI 楼，配置 `promptStyle='comfyui'` + NAI 渠道）对照内置文案逐条核对，修掉四类被实测暴露的问题：
+
+1. **`2people` 这类自造人数 tag**：danbooru 没有 `Npeople`，模型却在 6/8 张里额外补了个总数。规范与思维链人物槽都加「人数 tag 只用 danbooru 标准词（1girl / 1boy 1girl / 2girls），不要 2people」。
+2. **核心动作被写成英文长句**：实测出现 `man's hand pressing deep into woman's waist`、`man's fingers inserted into woman's pussy`、`man's hand tearing the crotch of woman's black pantyhose` 等 5/8 张。这类句子不是 danbooru tag、且与 nl 重复。规范加对照改法（→ `groping` / `hand on another's waist` / `fingering` / `torn pantyhose`），思维链核心动作槽与第三层自查同步收紧。
+3. **建档字段混入临时状态与不可渲染内容**：实测 `hair` 存成 `long silver hair in an elegant bun`（盘发是一次性造型，却被逐字照抄进 8/8 张图）、`outfit` 存成 cosplay 这身临时服装、`body` 存 `178cm`/`170cm+`、`extra` 存 `gentle handsome type`/`professional cosplayer`（气质评价与身份事实，画不出来）。建档规则拆出「字段值必须是 danbooru 画得出的英文词」「临时状态一律不写（点名临时发型与当前这身衣服）」「outfit 没有长期招牌着装就留空」三条；`hair` 的口径从「长度/发型」收紧为「长度」（避免模型把 bun 当长期发型）。
+4. **`fields.fandom` 被存成转义形态**：档案是跨规范共享的，NAI V5 规范与角色管理页都约定存**不带转义**的 `character name (copyright name)`，但 ComfyUI 侧只说了「画面 tag 要转义」、没说库里存哪种，模型便存了 `\(`。当前 `promptStyle='comfyui'` 下无害（ComfyUI 不照抄库里的 fandom），但切回 NAI 会把反斜杠原样发给 NovelAI。ComfyUI 规范与思维链补「写进档案的 fandom 一律不带转义，转义只在落到画面 tag 时做」。
+
+> 注：P6（8/8 张全 `medium shot`、取景无变化）经判断属于封闭场景下的合理选择，**刻意不改**。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

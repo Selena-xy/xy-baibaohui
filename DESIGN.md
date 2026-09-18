@@ -61,6 +61,25 @@
 
 > 观察项（本轮不动）：nl 的多人三段式（总起 `as the main focus` → 每人一句 → `blurred in the background` 收尾）实测 13 张双人图里只有 3 张带总起、1 张有收尾，画面本身没出问题，先不动；同一楼内 `hair bun` 时有时无（正文写的是银白发髻）属连续性小瑕疵，留待下轮看是否复发。
 
+### 0.6 第四轮实跑回归（v0.2.7）
+
+用户在同一份导出（同 5 个 AI 楼、正文未变）上重跑一轮，得 14 张图。这一轮的价值在于**同一份正文的前后对照**：0.5 的四条逐条验收——
+
+- **A 生效，且干净**：13 张双人图里女方的 `blue and black gradient dress`、`sheer black pantyhose`、`silver strappy high heels`、`tall`、`silver-blue glitter makeup` 与男方的 `grey hoodie` **全部带上了主人**；上一轮那种整片裸写从 12/13 张降到 **0 张**（唯一两张裸写的是一张单人物图的 `blue and black gradient dress`，本来就无需绑定）。
+- **B 生效**：`hand on another's waist`、`hand on another's inner thigh`、`hand up skirt`、`fingering`、`penetration`、`tearing pantyhose`/`torn sheer black pantyhose`、`holding strap`、`kabedon`、`leaning back`、`leaning against another`、`hug from behind`、`carrying`、`standing sex`、`groping` 全部**逐字取自词表**；`another` 被换成 `girl's`/`boy's` 的改写与上一轮 12 处自造短语（`hand between another's legs`、`fingers on silver hair girl`、`lifting another`、`clinging to another`、`tapping phone on gate`…）**一处不复现**。
+- **C 生效**：`1boy 1girl` 的 13 张图里男性**每张都有完整一份**（发色锚点 + 可见服装 + `faceless male`），上一轮那种「只剩一个人数 tag、男性整条消失」0 张；解剖词也绑好了（`penis on black hair boy`、`erection on black hair boy`，上一轮是裸写 `penis`）。
+- **D 生效**：14 张图的 tag 串里**没有** `portrait`/`landscape`；景别词都是真正的镜头词。
+
+同时暴露一条**由 0.5 的 A 条款自己带来的新问题**，以及两处小偏差：
+
+1. **`on` 形式被推广到锚点自身与视线词（9/13 张）**。A 条款给的写法是「`<件> on <发色词>`」，模型把它推广到了不该用的地方：锚点自己被绑定——`long silver-white hair in a cold elegant bun on silver hair girl`、`short black hair on black hair boy`、`blue eyes with silver-blue glitter makeup on silver hair girl`（妆容那条例句把 eyes 一起拖下水）；视线词也被接上 `on`——`looking down on silver hair girl`、`looking away on silver hair girl`、`looking at another on silver hair girl`，其中 `looking down on …` 语义已经反了（读成「俯视某人」而不是「她向下看」）；另有 1 张视线干脆裸写（`looking at another`），是 0.4 就禁止过的。
+   改法：在 A 那条后面补「**锚点自己永远不带 `on`**：发色与瞳色的短语照常裸列……需要点名谁的妆容时**单独写一条** `<妆容> on <发色词>`，别把 eyes 与妆容合成一条」；在表情/视线那条后面补「绑定一律用**称谓前缀**写法（`<发色词> girl smile`、`<发色词> girl looking away`）；表情与视线**不要用 `on` 形式**——视线词接上 `on` 会变成另一个意思」。
+   > 这是「给例子就会被推广」的又一例：例子要给，但必须同时写明例子的**适用边界**。
+2. **表情词形漂移（1 张）**：写了 `frowning`，列表给的是 `frown`。补「从列表里**连词形一起照抄**」。
+3. **体型与动作的短语化/堆叠**：`tall and curvaceous with long legs on silver hair girl`（带 `and`/`with` 的长短语，不是 danbooru 短 tag）2 张；一张图里堆了 `standing sex` + `penetration` + `penetration from below` + `carrying` 四个同义动作词。分别补「体型只用短词逐个写（`tall`、`curvy`、`long legs` 各算一条）」「同一场互动只写一个主词，最多再补一个方向或部位词」。
+
+> 又一次观察项：nl 的总起句这轮 **14/14 张齐全**（上一轮 3/13），但收尾句 `blurred in the background` 仍只 1/14——画面没出问题，继续不动；`hair bun` 仍时有时无（9/14 张写了）。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

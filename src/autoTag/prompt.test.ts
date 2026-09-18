@@ -450,6 +450,63 @@ describe('auto tag prompt', () => {
     }
   });
 
+  // 第四轮实跑(同一份导出重跑,14 张图):第三轮的 A-D 全部守住——裸写的裙袜/鞋/身高/妆容
+  // 清零、上轮那批自造短语清零、1boy 的男性在每张图里都有完整一份、tag 里不再出现 size 词。
+  // 但 A 的「<件> on <发色词>」写法被模型推广到了锚点自身与视线词上(9/13 张):
+  //   blue eyes with silver-blue glitter makeup on silver hair girl / short black hair on black hair boy
+  //   looking down on silver hair girl(语义已经反了)、looking at another on silver hair girl
+  // 再补一层「锚点不带 on、表情视线用称谓前缀」的约束。
+  it('locks the round-4 run fixes: anchors stay bare, expression/gaze bind by prefix', async () => {
+    const options: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      facelessMale: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const all = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      // A 的 on 形式不能被推广到锚点与视线
+      expect(all).toContain('锚点自己永远不带 on');
+      expect(all).toContain('不要给它们自己也接一个 on <发色词>');
+      expect(all).toContain('需要点名谁的妆容时单独写一条 <妆容> on <发色词>');
+      expect(all).toContain('别把 eyes 与妆容合成一条');
+      expect(all).toContain('绑定一律用称谓前缀写法（<发色词> girl smile、<发色词> girl looking away）');
+      expect(all).toContain('表情与视线**不要用 on 形式**');
+      // 表情词形与体型短词
+      expect(all).toContain('连词形一起照抄');
+      expect(all).toContain('体型只用短词逐个写（tall、curvy、long legs 各算一条）');
+      expect(all).toContain('写成带 and / with 的长短语就不是 danbooru tag 了');
+      // 一场互动一个主词
+      expect(all).toContain('同一场互动只写一个主词，最多再补一个方向或部位词');
+      // 思维链两处同步
+      expect(all).toContain('发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式');
+      // 两份中文规范与 NAI 4 链路同步(NAI 4 走同一份单串规范)
+      settings.defaultBackend = 'nai';
+      settings.nai.model = 'nai-diffusion-4-full';
+      const naiText = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(naiText).toContain('锚点自己永远不带 on');
+      expect(naiText).toContain('绑定一律用称谓前缀写法');
+      expect(naiText).toContain('同一场互动只写一个主词');
+      expect(naiText).toContain('体型只用短词逐个写');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
+  });
+
   it('无面男开关:开则男性不露脸,且任务协议与思维链两处都要下发', async () => {
     const base: AutoTagSettings = {
       enabled: true,

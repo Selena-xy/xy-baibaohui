@@ -47,6 +47,20 @@
    - 覆盖块用追加（而非改常量）实现，因此对三份内置思维链和用户自定义思维链一律生效。
 4. **人数 tag 与绑定锚点的两个残留问题**（`2girls` 与 `1boy 1girl` 并存、用 `1girl`/`1boy` 当锚点）经确认**本轮不动**——归入观察项，留待下一轮实跑再做判断。
 
+### 0.5 第三轮实跑回归（v0.2.7）
+
+拿第三份导出（`promptStyle='comfyui'` + 开 nl + 开「无面男」、5 个 AI 楼、15 张图）复核。先记验收：0.4 的改动**全部守住**——表情/视线 15/15 张齐全且全是列表原样单词（`gentle smile` 类形容词修饰 0 次）、上一轮的反面例子 0 泄漏、`2people` 0 次、锚点 0 次用 `1girl`/`1boy`（两个「观察项」就此销账）、`faceless male` 13/15 张落地且男性表情/视线与 nl 面部描述均为 0 次；NSFW 解剖绑定（`pussy on silver hair girl`）稳定生效。
+
+本轮新暴露四类问题，全部只动内置文案：
+
+1. **男女同框时「女方的专属件」整片裸写（12/13 张双人图）**。同一张图里男方的衣服绑得干干净净（`casual wear on black hair boy`），女方的 `blue and black gradient dress`、`sheer black pantyhose`、`silver strappy high heels`、`large breasts`、`tall`、`mature female`、`silver-blue glitter makeup` 却全部飘着；只有 1 张绑对了裙子。规范里明明写了「`pantyhose` 这类只有一个人穿的部件也必须带上主人」、思维链自查也点了名，实测照样 5 张裸写 `sheer black pantyhose`——因为那条规则的上下文是「两人都穿校服但男女版型不同」，是个假设句，`1boy 1girl` 这一支读不到约束。改法：把「只要同框还有第二个人，凡只有其中一人会有的东西都要带上主人」写成**无条件条款**，并补 `1boy 1girl` 的具体举例（裙/袜/鞋/妆容/胸/身高体型都写成 `on silver hair girl`）；「照抄不豁免（多人）绑定」同时写进规范与任务协议（库照抄与邻接绑定撞车时，模型选了「一字不改」）。
+2. **词表有词也被改写、表外动作则自造短语（13/15 张）**。模型把 `hand on another's waist` 改写成 `hand on girl's waist`（`another` 被当成可替换的占位符），表外动作则一律自己拼成 `<动作> on another` 结构：`hand between another's legs`、`fingers on silver hair girl`、`hand inside panties`、`leaning head on another`、`hand on another's wrist`、`lifting another`、`penetration under skirt`、`clinging to another`、`hugging from behind`，还有整句塞进 tag 的 `black hair boy tapping phone on gate`。改法：定死「词表逐字照抄、`another` 不许替换成 `girl's`/`boy's`」，讲清**互动类动作词本身就说明谁对谁、不需要再加主人**（只有单人动作才需邻接绑定），再给一条回落阶梯——手部接触回落到 `hand on another's waist / hip / ass / thigh / inner thigh / shoulder / arm / head / chest`，抱/抬/贴靠回落到 `carrying` / `hug from behind` / `leaning against another`，仍落不下就只写 `groping` / `fingering` / `penetration` 这类通用词、细节交给 nl。词表只补真正缺词的、确定的 danbooru 词（`hand on another's ass`、`hand on another's thigh`、`panties aside`、`spread legs`、`hug from behind`、`carrying`、`standing sex`），**不把实跑里那批自造短语字典化**——那等于把自造词洗白，还会让一张图越堆越多动作词。
+   > 维护纪律：`another` 的禁止项只写「不许替换成 `girl's`/`boy's` 或任何发色称谓」这种 token 级禁令，**不写出被泄漏的那整句**（0.4 的结论：展示反面短语会泄漏）。
+3. **`landscape` 被写进 tag 串的构图位**（1/15 张）。那张图因此没有任何景别词，而画幅方向本来就有独立的 `size` 键。改法：三份规范（ComfyUI / NAI 单串 / NAI V5）都点明「`portrait` / `landscape` 只写在 `size` 键，tag 串里不得出现这两个词」。
+4. **「无面男」的男性会整条消失**（2/15 张，都出现在男方主导的插入镜头）。这时 tag 串里只剩一个人数 tag：没有 `faceless male`、没有发色锚点、没有上衣，解剖词反而裸写成 `penis`，而 nl 里仍写着 `the faceless boy`——tag 与 nl 打架。改法：任务协议与思维链覆盖块两处都补「只要人数 tag 里有 `1boy`，他在 tag 串里就必须始终有自己完整的一份（发色锚点、可见服装、`faceless male`），不许只留一个人数 tag 就让他整条消失在串外；解剖部位照旧绑定到他身上（`penis on black hair boy`）」。
+
+> 观察项（本轮不动）：nl 的多人三段式（总起 `as the main focus` → 每人一句 → `blurred in the background` 收尾）实测 13 张双人图里只有 3 张带总起、1 张有收尾，画面本身没出问题，先不动；同一楼内 `hair bun` 时有时无（正文写的是银白发髻）属连续性小瑕疵，留待下轮看是否复发。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

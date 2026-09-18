@@ -367,6 +367,89 @@ describe('auto tag prompt', () => {
     }
   });
 
+  // 第三轮实跑(15 张图 / 5 个 AI 楼)暴露三类残留问题,逐条钉死:
+  // A) 男女同框时女方的裙/袜/鞋/妆容/胸/身高体型全部裸写(男方的 casual wear 反而绑了),12/13 张命中;
+  // B) 词表有词也被改写(hand on another's waist → hand on girl's waist),表外动作则自造
+  //    <动作> on another 短语(hand between another's legs、fingers on silver hair girl、lifting another…);
+  // D) 有一张把 landscape 写进了 tag 串的构图位,那张图反而没有景别词。
+  it('locks the round-3 run fixes: 1boy 1girl binding, verbatim action words, size word out of tags', async () => {
+    const options: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      facelessMale: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const all = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      // A) 男女同框与两人同性同标准:只有其中一人会有的东西逐件带主人。
+      //    规则原先只挂在「两人都穿校服但男女版型不同」这个假设句下,实跑里 1boy 1girl
+      //    的女方裙袜鞋妆容胸身高全裸写,所以改成无条件条款 + 具体到 items 的举例。
+      expect(all).toContain('男女同框（1boy 1girl）与两人同性是同一个标准');
+      expect(all).toContain('凡「只有其中一人会有的东西」都要带上主人');
+      expect(all).toContain('large breasts');
+      expect(all).toContain('都写成 on silver hair girl');
+      expect(all).toContain('裸写的裙袜、胸部与体型会被模型摊给同框的另一个人');
+      // 库照抄与邻接绑定撞车时模型选了「一字不改」,故规范与协议两处都点明照抄不豁免绑定。
+      expect(all).toContain('照抄不豁免绑定');
+      expect(all).toContain('照抄不豁免多人绑定');
+      expect(all).toContain('large breasts on silver hair girl');
+
+      // B) 词表逐字照抄 + 表外动作按阶梯回落。another 被改写成 girl's/boy's 是实跑原样,
+      //    所以这里只写「禁止某个 token」,不展示那条反面短语(展示了会被照抄)。
+      expect(all).toContain('上面这些词一律**原样照抄**');
+      expect(all).toContain("不许替换成 girl's、boy's 或任何发色称谓");
+      expect(all).not.toContain("hand on girl's waist");
+      expect(all).toContain('互动类动作（hand on another\'s…、groping、hug from behind、fingering、penetration）本身就说明了谁对谁');
+      expect(all).toContain('词表里没有的动作一律不许自己拼英文短语');
+      expect(all).toContain("回落到 hand on another's waist / hip / ass / thigh / inner thigh / shoulder / arm / head / chest");
+      expect(all).toContain('宁可少一个 tag，也不许自造模型没见过的词组');
+      // 本轮自造短语里真正缺词的几个,补的是确定的 danbooru 词。
+      for (const word of ['hand on another\'s ass', 'hand on another\'s thigh', 'panties aside', 'spread legs', 'hug from behind', 'carrying', 'standing sex']) {
+        expect(all).toContain(word);
+      }
+      // 思维链核心动作槽同步,否则槽位里先自造、落 tag 时再漏一次。
+      expect(all).toContain("词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's");
+
+      // D) 画幅方向只写 size 键,tag 的构图位必须放景别词。
+      expect(all).toContain('portrait / landscape 只写在 size 键里，tag 串里不得出现这两个词');
+      expect(all).toContain('tag 里也没有 portrait / landscape 这两个词');
+
+      // 两份中文规范(ComfyUI / NAI 4 单串)必须同步改:少一份就有一条链路漏改。
+      // NAI 4 系走的是单串 + 邻接绑定那一支(4.5 起转 Character Prompts,不适用)。
+      settings.defaultBackend = 'nai';
+      settings.nai.model = 'nai-diffusion-4-full';
+      const naiText = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(naiText).toContain('男女同框（1boy 1girl）与两人同性是同一个标准');
+      expect(naiText).toContain('上面这些词一律**原样照抄**');
+      expect(naiText).toContain('词表里没有的动作一律不许自己拼英文短语');
+      expect(naiText).toContain('portrait / landscape 只写在 size 键里，tag 串里不得出现这两个词');
+      expect(naiText).not.toContain("hand on girl's waist");
+
+      // NAI V5 那份是英文规范,同一条 size 规则要一并下发(三份规范都带 size 键)。
+      settings.nai.model = 'nai-diffusion-5-full';
+      const v5Text = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(v5Text).toContain('Write portrait / landscape only in the size key');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
+  });
+
   it('无面男开关:开则男性不露脸,且任务协议与思维链两处都要下发', async () => {
     const base: AutoTagSettings = {
       enabled: true,
@@ -395,6 +478,13 @@ describe('auto tag prompt', () => {
       expect(on).toContain('**男性不露脸（用户已开启「无面男」）**');
       expect(on).toContain('faceless male');
       expect(on).toContain('该画面的 nl 同样不描述他的面部');
+      // 第三轮实跑:2/15 张的男性整个人从 tag 串里消失(只剩一个人数 tag,连锚点与上衣都没了),
+      // 而 nl 里还写着 faceless boy —— 两处都要说清「人数 tag 里有 1boy 就得有他的完整一份」。
+      expect(on).toContain('只要人数 tag 里有 1boy');
+      expect(on).toContain('faceless male 一个都不能少');
+      expect(on).toContain('不得只留一个人数 tag 就让他整条消失在串外');
+      expect(on).toContain('不许只写个人数 tag 就把他丢在串外');
+      expect(on).toContain('penis on black hair boy');
       // 2) 思维链侧:必须有一条「优先于以上所有条目」的覆盖块,否则会被
       //    「每个在场角色都必须有表情词和视线词」压回来。
       expect(on).toContain('本楼额外规则·优先于以上所有条目');

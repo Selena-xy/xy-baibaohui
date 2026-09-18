@@ -105,7 +105,7 @@ function backendThinkingPrompt(options: AutoTagSettings, naiCharPromptsOn: boole
   const faceless = options.facelessMale
     ? `
 
-【本楼额外规则·优先于以上所有条目】男性不露脸（用户已开启「无面男」）：与女性同框的男性角色一律不画脸——不加表情与视线（上面「每个在场角色都必须有表情词和视线词」对这些男性不适用），改为落一个 faceless male，脸不进画面；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全。nl 里同样不描述他的面部。画面里没有女性、只有男性单独出镜时照常画脸。`
+【本楼额外规则·优先于以上所有条目】男性不露脸（用户已开启「无面男」）：与女性同框的男性角色一律不画脸——不加表情与视线（上面「每个在场角色都必须有表情词和视线词」对这些男性不适用），改为落一个 faceless male，脸不进画面；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全；只要人数 tag 里有 1boy，他在 tag 串里就必须始终有自己完整的一份——发色锚点、可见服装、faceless male 一个都不能少，不许只写个人数 tag 就把他丢在串外，他的解剖部位也照旧绑定到他身上（penis on black hair boy）。nl 里同样不描述他的面部。画面里没有女性、只有男性单独出镜时照常画脸。`
     : '';
   return resolved + faceless;
 }
@@ -249,7 +249,7 @@ export async function buildAutoTagMessages(
 
   const libraryReferenceRule = naiCharPromptsOn
     ? '- If a visible character exists in the fixed appearance library or is created in this changes array, copy the fixed fields into that character own characters[].tag; keep appearance wording verbatim but convert 1girl/1boy to girl/boy. The fandom identity tag (fields.fandom) goes first, verbatim. Do not put them in Base or assign them to another character. Library natural-language notes may inform that character nl. Use the library entry name verbatim for characters[].name and for any name inside tag/nl — never transliterate, translate, or vary it.'
-    : '- 画面中的角色只要已在【角色固定外貌库】，或在本次 changes 中建了档，tag 与 nl 就必须照抄库中/刚建档的字段值，用词一字不改，不得自行改写或增删其固定外貌。fandom 字段只作档案记录，ComfyUI 画图时不照抄它，同人身份 tag 按下发的 ComfyUI 规范现场判定（括号不加转义）。\n   - 同一角色的固定外貌在一张图里只写一遍：同一图内再次提到他时用简短指代（the boy、the silver-haired girl）承接，禁止把整串外貌重复第二遍——重复会让模型以为画面里有多个同样的人，把一个人画成互不相连的几块。';
+    : '- 画面中的角色只要已在【角色固定外貌库】，或在本次 changes 中建了档，tag 与 nl 就必须照抄库中/刚建档的字段值，用词一字不改，不得自行改写或增删其固定外貌——但**照抄不豁免多人绑定**：同框还有第二个人时，抄下来的字段值仍要按邻接绑定写法带上主人（库里是 large breasts、画面是 1boy 1girl，就写 large breasts on silver hair girl）。fandom 字段只作档案记录，ComfyUI 画图时不照抄它，同人身份 tag 按下发的 ComfyUI 规范现场判定（括号不加转义）。\n   - 同一角色的固定外貌在一张图里只写一遍：同一图内再次提到他时用简短指代（the boy、the silver-haired girl）承接，禁止把整串外貌重复第二遍——重复会让模型以为画面里有多个同样的人，把一个人画成互不相连的几块。';
   const newCharacterNlRule = naiCharPromptsOn
     ? '\n   - NAI V5 profile requirement: every field:"new" change must include a non-empty nl containing a concise English natural-language description of the character fixed appearance. The name must be the character exact name from the card/lorebook/story — a Chinese name stays Chinese (小雪), never pinyin or translation. Fandom characters must also include their identity tag in fields.fandom, e.g. {"name":"冬海","field":"new","fields":{"sex":"1girl","hair":"long black hair","eyes":"blue eyes","fandom":"kasumi (blue archive)"},"nl":"A girl with long black hair and blue eyes.","position":"P2","reason":"first appearance"}; original characters omit fandom. If an existing library entry lacks fandom but the character is fandom, report a changes item with field:"fandom". Describe only fixed appearance: no current outfit, pose, or location — temporary states never enter the profile.'
     : '';
@@ -269,7 +269,7 @@ export async function buildAutoTagMessages(
   // (见 backendThinkingPrompt)——两处都要有,少一处就会被思维链的「人人要有表情」压回来。
   const facelessMaleRule = options.facelessMale
     ? `
-   - **男性不露脸（用户已开启「无面男」）**：画面里男性与女性同框时，男性一律不画脸——不写他的表情与视线，改为落一个 faceless male；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全。该画面的 nl 同样不描述他的面部。男性单独出镜（画面里没有女性）时照常画脸。`
+   - **男性不露脸（用户已开启「无面男」）**：画面里男性与女性同框时，男性一律不画脸——不写他的表情与视线，改为落一个 faceless male；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全；只要人数 tag 里有 1boy，他在 tag 串里就必须始终有自己完整的一份（发色锚点、可见服装、faceless male），不得只留一个人数 tag 就让他整条消失在串外，他的解剖部位也照旧绑定到他身上（penis on black hair boy）。该画面的 nl 同样不描述他的面部。男性单独出镜（画面里没有女性）时照常画脸。`
     : '';
   const multiCharacterBindingRule = naiCharPromptsOn
     ? '- 多人画面中，每个角色的发色、瞳色、体型、服装、物件和个人动作都必须放进各自的 characters[].tag，禁止放进 Base 或分配给其他角色。'

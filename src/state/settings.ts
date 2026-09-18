@@ -432,7 +432,9 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 1girl, long hair, school uniform, sitting by window, classroom, warm sunlight
 从重要到次要排列：人数/主体 → 镜头构图 → 外貌 → 服饰 → 动作姿态 → 表情视线 → 场景 → 光线氛围；单个画面控制在 40 个 tag 以内；当「生成自然语言」开启时精简到 20～30 个——tag 只留人数/主体/构图/发色瞳色/关键服装/核心动作/表情视线/场景光，其余细节交给 nl。
 动作姿态内部再排：本画面核心动作（谁做了什么、身体部位接触了什么）必须是动作区第一条独立短 tag；辅助姿态（坐着、站着、跪着等）排后面。同一动作词不得重复写两遍。
-核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's inner thigh、touching crotch、hand up skirt、fingering、penetration、tearing pantyhose、torn pantyhose、holding strap、kabedon、leaning back、leaning against another、orgasm。
+核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's ass、hand on another's inner thigh、hand on another's thigh、touching crotch、hand up skirt、fingering、panties aside、spread legs、penetration、standing sex、tearing pantyhose、torn pantyhose、hug from behind、carrying、holding strap、kabedon、leaning back、leaning against another、orgasm。
+上面这些词一律**原样照抄**：带 another 的词里 another 是固定写法，不许替换成 girl's、boy's 或任何发色称谓，也不许在它前后另加主语。互动类动作（hand on another's…、groping、hug from behind、fingering、penetration）本身就说明了谁对谁，**不需要再加主人**；只有单人动作（waving、eating dango 这类）才按上面的邻接绑定写法带上发色称谓。
+**词表里没有的动作一律不许自己拼英文短语**：手部接触回落到 hand on another's waist / hip / ass / thigh / inner thigh / shoulder / arm / head / chest 这一族，抱、抬、贴靠回落到 carrying / hug from behind / leaning against another，仍然落不下就只写 groping / fingering / penetration 这类通用词，把接触点的细节全部交给 nl——宁可少一个 tag，也不许自造模型没见过的词组。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
 - 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
@@ -456,6 +458,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 - 各自不同的动作/姿态也用同一个绑定手法写进 tag：写 "black hair girl waving, silver hair girl eating dango"，不要写成 "waving, eating dango" 这种无法分配的裸动作（模型会随机安到人头上）；多人共同参与的互动（holding hands、hug 等）直接写。
 - 表情与视线同样是**每人各一份、必须绑定**的特征：写 "black hair girl smiling, silver hair girl looking at another"，不要把 smile、looking at another 裸写在串里——两人同框时裸写的表情/视线只会落到其中一人身上，另一人变成默认木脸。两人表情或视线恰好相同时也各写一份带称谓的，不适用「共有特征只写一次」。
 - 体型词（petite、tall、muscular 等）不是锚点，必须绑定到具体角色，不要裸写：写 "petite on silver hair girl"，不要让 petite 飘在串里——飘着的体型词会被模型摊到同框每个人身上。发色、瞳色本身是用来指认角色的锚点，照常裸列即可，不需要（也无法）自我绑定。
+- 男女同框（1boy 1girl）与两人同性是同一个标准：只要同框还有第二个人，凡「只有其中一人会有的东西」都要带上主人，与另一人穿什么无关——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型，男方的上衣裤子，全部逐件写成「<件> on <发色词>」（silver hair girl 的 blue and black gradient dress、sheer black pantyhose、silver strappy high heels、large breasts、tall 都写成 on silver hair girl）；从【角色固定外貌库】照抄来的字段值也照此办理，照抄不豁免绑定。只有发色与瞳色本身是指认锚点，照常裸列。裸写的裙袜、胸部与体型会被模型摊给同框的另一个人。
 - 肤色词默认一个都不写：模型的默认肤色已经足够白，pale skin、white skin、fair skin 这类白皙词一律禁止——再叠一层会白得发灰、像僵尸一样失真。只有角色明显是晒黑或深肤色时才写 tan、dark skin 这类词（同样绑定到具体角色）；从角色库照抄字段时，白皙类肤色词也跳过不抄。
 - 场景词 1~2 个即可，多了会抢角色主体；背景不重要时用 blurred background 类词压住。
 
@@ -498,6 +501,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 先确定最终景别与主体在画面中的空间分布，再决定方向；人数只是参考，不是硬规则。
 群像、远景全景、宽阔场景、横向展开的互动写 landscape；单人、纵向站姿、特写以及双人近距离构图可写 portrait。
 两人同框不等于必须横屏。方向必须与 tag 里的镜头词一致（wide shot 通常配 landscape，close-up / upper body 通常配 portrait）。
+portrait / landscape 只写在 size 键里，tag 串里不得出现这两个词——tag 的构图位必须放一个真正的景别词（close-up / upper body / medium shot / full body / wide shot）。
 
 显式 NSFW 场景（重要）：
 - 正文明确为显式性爱/裸露画面时，不得依赖 nsfw、nude、sex 这类泛化词——ComfyUI 系底模（尤其 Anima/Qwen 链路）对泛化词的表现差，写清实际可见的部位才画得准。
@@ -535,7 +539,9 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 1girl, long hair, school uniform, sitting by window, classroom, warm sunlight
 从重要到次要排列：人数/主体 → 镜头构图 → 外貌 → 服饰 → 动作姿态 → 表情视线 → 场景 → 光线氛围；单个画面控制在 40 个 tag 以内。
 动作姿态内部再排：本画面核心动作（谁做了什么、身体部位接触了什么）必须是动作区第一条独立短 tag；辅助姿态（坐着、站着、跪着等）排后面。同一动作词不得重复写两遍。
-核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's inner thigh、touching crotch、hand up skirt、fingering、penetration、tearing pantyhose、torn pantyhose、holding strap、kabedon、leaning back、leaning against another、orgasm。
+核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's ass、hand on another's inner thigh、hand on another's thigh、touching crotch、hand up skirt、fingering、panties aside、spread legs、penetration、standing sex、tearing pantyhose、torn pantyhose、hug from behind、carrying、holding strap、kabedon、leaning back、leaning against another、orgasm。
+上面这些词一律**原样照抄**：带 another 的词里 another 是固定写法，不许替换成 girl's、boy's 或任何发色称谓，也不许在它前后另加主语。互动类动作（hand on another's…、groping、hug from behind、fingering、penetration）本身就说明了谁对谁，**不需要再加主人**；只有单人动作（waving、eating dango 这类）才按上面的邻接绑定写法带上发色称谓。
+**词表里没有的动作一律不许自己拼英文短语**：手部接触回落到 hand on another's waist / hip / ass / thigh / inner thigh / shoulder / arm / head / chest 这一族，抱、抬、贴靠回落到 carrying / hug from behind / leaning against another，仍然落不下就只写 groping / fingering / penetration 这类通用词，把接触点的细节全部交给 nl——宁可少一个 tag，也不许自造模型没见过的词组。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
 - 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
@@ -555,6 +561,7 @@ NAI 对 danbooru 体系理解最好：人物多的画面务必写清数量 tag�
 - 各自不同的动作/姿态也用同一个绑定手法写进 tag：写 "black hair girl waving, silver hair girl eating dango"，不要写成 "waving, eating dango" 这种无法分配的裸动作（模型会随机安到人头上）；多人共同参与的互动（holding hands、hug 等）直接写。
 - 表情与视线同样是**每人各一份、必须绑定**的特征：写 "black hair girl smiling, silver hair girl looking at another"，不要把 smile、looking at another 裸写在串里——两人同框时裸写的表情/视线只会落到其中一人身上，另一人变成默认木脸。两人表情或视线恰好相同时也各写一份带称谓的，不适用「共有特征只写一次」。
 - 体型词（petite、tall、muscular 等）不是锚点，必须绑定到具体角色，不要裸写：写 "petite on silver hair girl"，不要让 petite 飘在串里——飘着的体型词会被模型摊到同框每个人身上。发色、瞳色本身是用来指认角色的锚点，照常裸列即可，不需要（也无法）自我绑定。
+- 男女同框（1boy 1girl）与两人同性是同一个标准：只要同框还有第二个人，凡「只有其中一人会有的东西」都要带上主人，与另一人穿什么无关——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型，男方的上衣裤子，全部逐件写成「<件> on <发色词>」（silver hair girl 的 blue and black gradient dress、sheer black pantyhose、silver strappy high heels、large breasts、tall 都写成 on silver hair girl）；从【角色固定外貌库】照抄来的字段值也照此办理，照抄不豁免绑定。只有发色与瞳色本身是指认锚点，照常裸列。裸写的裙袜、胸部与体型会被模型摊给同框的另一个人。
 - 场景词 1~2 个即可，多了会抢角色主体；背景不重要时用 blurred background 类词压住。
 
 多人 tag 示例（对照上面的规则看写法）：
@@ -594,6 +601,7 @@ NAI 对 danbooru 体系理解最好：人物多的画面务必写清数量 tag�
 先确定最终景别与主体在画面中的空间分布，再决定方向；人数只是参考，不是硬规则。
 群像、远景全景、宽阔场景、横向展开的互动写 landscape；单人、纵向站姿、特写以及双人近距离构图可写 portrait。
 两人同框不等于必须横屏。方向必须与 tag 里的镜头词一致（wide shot 通常配 landscape，close-up / upper body 通常配 portrait）。
+portrait / landscape 只写在 size 键里，tag 串里不得出现这两个词——tag 的构图位必须放一个真正的景别词（close-up / upper body / medium shot / full body / wide shot）。
 
 通用要求：
 - 不写质量词（masterpiece、best quality 之类，由系统按模型自动附加）、不写负面内容。
@@ -653,7 +661,7 @@ E. 选段
 
 ■ P<编号>
   人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy 1girl / 2girls），不要 2people 这类自造总数；+ 在场角色名；无人物画面写 no humans>
-  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）>
+  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）；词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳上面的接触点>
   角色行（每个在场角色各一行）：<角色名>｜表情｜视线｜本镜头可见服装｜临时状态｜个人动作
   场景：<地点 + 画面里实际可见的关键道具>
@@ -674,9 +682,9 @@ E. 选段
 第三层｜落笔前自查（只核对，不预写答案）
 
 这一层只逐张核对下面几条，每点写一句结论即可。<thinking> 里禁止出现任何最终答案的草稿——不写完整 tag 串、不写完整 nl 句、更不要写出 JSON 对象或 "JSON:" 之类的标题。答案只在 </thinking> 之后出现一次，在思考里先写一遍等于把整份输出付两遍钱。核对完直接闭合 </thinking> 并输出 JSON：
-   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里全是 danbooru 短词，没有英文句子或所有格长短语；人数 tag 用的是 1boy 1girl / 2girls 这类标准词，没有 2people 这种自造总数。
+   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里全是 danbooru 短词，没有英文句子或所有格长短语；人数 tag 用的是 1boy 1girl / 2girls 这类标准词，没有 2people 这种自造总数；tag 里也没有 portrait / landscape 这两个词——它们只写在 size 键，tag 的构图位必须是一个真正的景别词。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
-   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。
+   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
    - 没有 pale skin、white skin、fair skin 这类白皙肤色词混进任何一张图（角色库字段里有也跳过不抄）：默认肤色已经够白，写了会白得发灰失真；角色真是晒黑/深肤色时用的 tan、dark skin 不在此列。
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的 tag 串里都有 B 段定下的 character name (copyright name) 身份 tag（人数/构图之后、普通外貌之前，括号保持原样未转义），原创角色没有被误加作品名。
@@ -735,7 +743,7 @@ E. 选段
 
 ■ P<编号>
   人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy 1girl / 2girls），不要 2people 这类自造总数；+ 在场角色名；无人物画面写 no humans>
-  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）>
+  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）；词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳上面的接触点>
   角色行（每个在场角色各一行）：<角色名>｜表情｜视线｜本镜头可见服装｜临时状态｜个人动作
   场景：<地点 + 画面里实际可见的关键道具>
@@ -758,7 +766,7 @@ E. 选段
 这一层只逐张核对下面几条，每点写一句结论即可。<thinking> 里禁止出现任何最终答案的草稿——不写完整 tag 串、不写完整 nl 句、更不要写出 JSON 对象或 "JSON:" 之类的标题。答案只在 </thinking> 之后出现一次，在思考里先写一遍等于把整份输出付两遍钱。核对完直接闭合 </thinking> 并输出 JSON：
    - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
-   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。
+   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的 tag 串里都有 B 段定下的 character name (copyright name) 身份 tag（人数/构图之后、普通外貌之前，不转义括号），原创角色没有被误加作品名。
    - 若本图是显式 NSFW 场景：实际可见的性器官、身体部位和接触关系都已用准确 tag 写明，没有只用 nsfw、nude、sex 这类泛化词一笔带过；非显式场景本项直接跳过。
@@ -924,6 +932,7 @@ Orientation (the size key):
 Decide the final shot distance and how the subjects are distributed in frame first, then choose the direction. Character count is a hint, not a rule.
 Write landscape for group shots, distant or panoramic views, wide scenes, and horizontally spread interactions. Write portrait for a single figure, an upright standing pose, close-ups, and two figures in a close composition.
 Two characters in frame does not mean the image must be landscape. The direction must agree with the shot distance in Base: wide shot usually pairs with landscape, close-up and upper body usually pair with portrait. When unsure, write portrait.
+Write portrait / landscape only in the size key; never put either word inside a tag string — the composition slot of a tag string must hold a real shot distance (close-up / upper body / medium shot / full body / wide shot) instead.
 
 Example (小雪 is the principal character and has a library profile; 三年级队长 is an unnamed opponent needed to show 小雪's action, not an unrelated bystander. She gets her own Character Prompt, is completed once for this image, and is never registered):
 {"position":"P2","tag":"2girls, rooftop, sunset, medium shot, foot on hand","nl":"Two girls on a rooftop at sunset, one pinning the other's hand under her foot.","characters":[{"name":"小雪","tag":"girl, long black hair, blue eyes, white dress, source#stepping on","nl":"The girl on the left presses her opponent's hand down with one foot."},{"name":"三年级队长","tag":"girl, short brown hair, amber eyes, grey training uniform, lying on ground, surprised, looking up, target#stepped on","nl":"The other girl lies on the ground on the right, her hand pinned, staring up in shock."}],"size":"landscape"}`;

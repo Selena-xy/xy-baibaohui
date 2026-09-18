@@ -72,6 +72,7 @@ https://github.com/saber3818717531-sudo/xy-baibaohui
 - **内置提示词调优（v0.2.7）**：ComfyUI 规范/思维链补上显式 NSFW 解剖落点（写具体部位并邻接绑定，不用 `nsfw`/`nude`/`sex` 泛化词）；开启自然语言时 tag 精简到 20～30 个，细节交给 nl（Qwen 链路底模更吃自然语言）；思维链 B 段拆出【一次性】角色并明确其入画写法；表情词表补 7 个稳定词（`winking`、`glaring`、`staring`、`tongue out`、`biting lip`、`drooling`、`sweat drop`）。
 - **实跑回归修正（v0.2.7）**：按真实聊天导出逐图核对后修掉四类问题——禁止 `2people` 这类自造人数 tag；核心动作必须是 danbooru 短 tag 而不是英文长句（`man's hand pressing...` → `hand on another's waist`）；建档字段禁止写身高厘米数、气质/身份评价、临时发型（盘/扎发）与当前这身临时服装（cosplay/制服），`outfit` 没有长期招牌着装就留空；身份 tag 的圆括号一律不转义（实测加转义会把整套官方设定硬套上去、压掉其余细节描写），`fields.fandom` 与画面 tag 同形态。
 - **无面男开关（v0.2.7）**：开启后，男女同框时男性一律不画脸（落 `faceless male`、不写表情与视线），把视觉焦点让给女性角色；男性单独出镜时照常画脸。默认关。
+- **实跑回归修正·第三轮（v0.2.7）**：逐图核对第三份导出（15 张）后修掉四类问题——男女同框时「只有其中一人会有的东西」（女方的裙/袜/鞋/妆容/胸/身高体型、男方的上衣裤子）一律逐件绑定到发色称谓，且库字段照抄不豁免绑定；核心动作词一律从词表**原样照抄**（`another` 不许改成 `girl's`/`boy's`），表外动作按回落阶梯挑词、不许自造英文短语（词表补 `hand on another's ass`、`hand on another's thigh`、`panties aside`、`spread legs`、`hug from behind`、`carrying`、`standing sex`）；`portrait`/`landscape` 只写在 `size` 键、不得进 tag 串；「无面男」开启时男性在 tag 串里必须始终有自己完整的一份（发色锚点 + 可见服装 + `faceless male`），不许只剩一个人数 tag。上一轮的结论（反面短语泄漏、`2people`、用 `1girl`/`1boy` 当锚点）本轮实测 0 复发。
 - **更新源指向本仓库**：「检查更新」不会再把你带回上游原版。
 
 ---

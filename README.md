@@ -69,6 +69,7 @@ https://github.com/saber3818717531-sudo/xy-baibaohui
 
 - **提示词规范与出图渠道解耦（v0.2.7）**：新增「生成提示词规范」开关，可在 NAI 渠道页把自动 tag 的书写规范从 NAI 切到 ComfyUI（单串 tag + 邻接绑定 + 圆括号转义），专门适配「NAI 协议 + ComfyUI 底层」的第三方站（如 latent.moe / Anima）。
 - **生成自然语言独立开关**：非 ComfyUI 后端选用 ComfyUI 规范时，可单独决定是否附带自然语言描述（Anima / Flux 类底模建议开启）。
+- **内置提示词调优（v0.2.7）**：ComfyUI 规范/思维链补上显式 NSFW 解剖落点（写具体部位并邻接绑定，不用 `nsfw`/`nude`/`sex` 泛化词）；开启自然语言时 tag 精简到 20～30 个，细节交给 nl（Qwen 链路底模更吃自然语言）；思维链 B 段拆出【一次性】角色并明确其入画写法；表情词表补 7 个稳定词（`winking`、`glaring`、`staring`、`tongue out`、`biting lip`、`drooling`、`sweat drop`）。
 - **更新源指向本仓库**：「检查更新」不会再把你带回上游原版。
 
 ---

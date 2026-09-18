@@ -14,6 +14,15 @@
 - 背景：NAI 协议 + ComfyUI 系底模的兼容站会把 `char_captions` 压平成单串送进工作流；NAI 规范禁止的邻接绑定反而成为唯一可用的多角色区分手法，身份 tag 的圆括号必须按 ComfyUI 口径转义。
 - 面板入口：NAI 渠道页 →「生成提示词规范」。
 
+### 0.2 内置提示词调优（v0.2.7）
+
+四条内容改动，全部只动 `state/settings.ts` 的内置默认常量，协议与代码分支不变：
+
+1. **ComfyUI 规范/思维链补显式 NSFW 解剖落点**：对齐 NAI 那两份已有的条款——显式场景写实际可见的解剖词（`breasts`、`nipples`、`penis`、`pussy` 等）并按发色称谓邻接绑定到人，禁止 `nsfw`/`nude`/`sex` 泛化词，遮住/画外的不写。ComfyUI 单串没有 `source#`/`target#`，归属全靠邻接绑定，这是与 NAI 版本的唯一差异。
+2. **开启自然语言时 tag 精简到 20～30 个**：ComfyUI 规范原为短 tag 优先的 Checkpoint/Illustrious 写；Anima/Qwen 链路自然语言优先，tag 过多反而稀释语义。只在 `{{nl}}` 展开时生效，纯 tag 用户不受影响；思维链第三层同步加「tag ≤ 30 且细节留给 nl」自查。
+3. **思维链 B 段拆出【一次性】角色**：与 NAI V5 思维链同构——【已建档】/【本次建档】/【一次性】三分类；【一次性】不建档不写 changes，入画时当普通角色写进 tag 串，外貌按世界观一次补全、不编造人名；第二层角色行与第三层自查同步。
+4. **表情词表 +7 个稳定词**：`winking`、`glaring`、`staring`、`tongue out`、`biting lip`、`drooling`、`sweat drop`（ComfyUI / NAI / NAI V5 三份同步），保留「未列出的词一律不许自创」的防呆边界。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

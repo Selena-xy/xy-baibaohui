@@ -276,7 +276,7 @@ describe('auto tag prompt', () => {
     expect(messages.some(m => m.content.includes('不得为了丰富画面自行添加泥地、土路'))).toBe(true);
     expect(thinkingMsg?.content).toContain('没依据就别写');
     expect(thinkingMsg?.content).toContain('没依据就删除');
-    expect(thinkingMsg?.content).toContain('只有名字实际列在【角色固定外貌库】区块中的才算已建档');
+    expect(thinkingMsg?.content).toContain('只有名字实际列在该区块中才算已建档');
     expect(thinkingMsg?.content).toContain('按正文 P 位置维护每个角色的临时服装');
     expect(thinkingMsg?.content).toContain('视觉指纹');
     expect(thinkingMsg?.content).toContain('版型/剪裁 + 主色 + 关键部件');
@@ -408,7 +408,9 @@ describe('auto tag prompt', () => {
         '每个同人角色的 tag 串里都有 B 段定下的 character name \\(copyright name\\) 身份 tag',
       );
       expect(text).toContain('若本图协议含 negative 键');
-      expect(text).not.toContain('若本图是显式 NSFW 场景');
+      // 改动 1:ComfyUI 规范/思维链补了显式 NSFW 解剖落点(与 NAI 共用这条自查,
+      // 但 Comfy 不要求 source#/target#)。这条从「不出现」变「出现」是刻意为之。
+      expect(text).toContain('若本图是显式 NSFW 场景');
       // spec 的转义指导必须原样到达模型:模板字符串里 \( 会被烹饪成 (,
       // 0.1.16 起这条实际发给模型的就是未转义括号,一直是坏的。
       expect(text).toContain('实际提示词形态为 character name \\(copyright name\\)');

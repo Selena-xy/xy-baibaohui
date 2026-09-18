@@ -67,6 +67,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts({ jailbreak: '附加规则' }),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -114,6 +115,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -133,6 +135,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(
@@ -179,6 +182,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
 
@@ -214,6 +218,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -324,6 +329,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -336,11 +342,15 @@ describe('auto tag prompt', () => {
       expect(all).toContain('一律不要写 2people、3people 这类自造总数');
       expect(all).toContain('不要 2people 这类自造总数');
       expect(all).toContain('没有 2people 这种自造总数');
-      // 2) 核心动作必须是 danbooru 短 tag,句子留给 nl
-      expect(all).toContain('绝不允许把接触点那句话原样翻成英文塞进 tag');
-      expect(all).toContain("man's hand pressing deep into woman's waist");
+      // 2) 核心动作必须是 danbooru 短 tag,句子留给 nl。
+      //    不再给「before → after」对照:那些反面句子被模型原样照抄进过输出
+      //    (实测漏出 "1boy's hand pressing deep into 1girl's waist"),只留正面词表。
+      expect(all).toContain('核心动作**本身也只能用 danbooru 短 tag**');
+      expect(all).toContain('groping');
       expect(all).toContain('torn pantyhose');
-      expect(all).toContain('句子留给 nl');
+      expect(all).toContain('句子一律留给 nl');
+      expect(all).not.toContain("man's hand pressing deep into woman's waist");
+      expect(all).not.toContain('boy holding yellow grab handle');
       // 3) 建档字段禁止项:数字/气质评价/临时发型/当前这身衣服
       expect(all).toContain('身高体重等数字（178cm、50kg）');
       expect(all).toContain('professional cosplayer');
@@ -357,6 +367,49 @@ describe('auto tag prompt', () => {
     }
   });
 
+  it('无面男开关:开则男性不露脸,且任务协议与思维链两处都要下发', async () => {
+    const base: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      facelessMale: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const off = (await buildAutoTagMessages(context(), 1, base, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(off).not.toContain('faceless male');
+      expect(off).not.toContain('无面男');
+
+      const onMsgs = await buildAutoTagMessages(context(), 1, { ...base, facelessMale: true }, null);
+      const on = onMsgs.map(m => m.content).join('\n');
+      // 1) 任务协议侧:给出输出口径(faceless male + nl 不写脸)
+      expect(on).toContain('**男性不露脸（用户已开启「无面男」）**');
+      expect(on).toContain('faceless male');
+      expect(on).toContain('该画面的 nl 同样不描述他的面部');
+      // 2) 思维链侧:必须有一条「优先于以上所有条目」的覆盖块,否则会被
+      //    「每个在场角色都必须有表情词和视线词」压回来。
+      expect(on).toContain('本楼额外规则·优先于以上所有条目');
+      expect(on).toContain('这些男性不适用');
+      expect(on).toContain('只有男性单独出镜时照常画脸');
+      // 覆盖块必须落在思维链末尾——思维链是最后一条 system,而它通篇要求人人有表情,
+      // 覆盖块不压在它末尾就等于没写。按标记取,不依赖消息下标。
+      const thinking = onMsgs.find(m => m.content.includes('【输出前思考清单】'))?.content ?? '';
+      expect(thinking.length).toBeGreaterThan(0);
+      expect(thinking.trimEnd().endsWith('照常画脸。')).toBe(true);
+    } finally {
+      settings.defaultBackend = oldBackend;
+    }
+  });
+
   it('uses custom thinking/prefill when provided', async () => {
     const options: AutoTagSettings = {
       enabled: true,
@@ -367,6 +420,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts({ comfyThinking: '自定义清单', prefill: 'custom>' }),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -388,6 +442,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts({
         comfyThinking: 'COMFY-CHECKLIST',
         naiThinking: 'NAI-CHECKLIST',
@@ -440,6 +495,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -517,6 +573,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -581,6 +638,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -652,6 +710,7 @@ describe('auto tag prompt', () => {
         autoGenerate: true,
         promptStyle: 'auto',
         comfySpecNl: false,
+      facelessMale: false,
         prompts: prompts(),
       };
       const oldBackend = settings.defaultBackend;
@@ -703,6 +762,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -745,6 +805,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -788,6 +849,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const library = '【角色固定外貌库(系统维护)】\n小雪: 1girl, long silver hair';
@@ -814,6 +876,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -833,6 +896,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(
@@ -860,6 +924,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -897,6 +962,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -910,10 +976,14 @@ describe('auto tag prompt', () => {
         expect(spec?.content).toContain('动作姿态 → 表情视线 → 场景');
         expect(spec?.content).toContain('表情与视线每张图都要写，不得省略');
         expect(spec?.content).toContain('判断为面无表情时也要显式写 expressionless');
-        // 首轮实跑漏出 gentle smile / shy expression / neutral curious expression
-        // 这类非 danbooru 词组:槽位填对了,转 tag 时原样直译。规范里要给限定词表。
+        // 表情只能从列表原样取用。旧文案用「gentle smile 写 smile」这类反面例子做示范,
+        // 实测那些例子本身被模型照抄进了输出(gentle smile 真的出现在 tag 里)——
+        // 故改成正向表述,并保证反面例子不出现在规范中。
         expect(spec?.content).toContain('必须使用模型认识的标准 danbooru 词，不得自创描述性词组');
-        expect(spec?.content).toContain('gentle smile 写 smile，shy expression 写 blush');
+        expect(spec?.content).toContain('表情与视线一律从上面列表里**原样取用一个词**');
+        expect(spec?.content).toContain('不得加形容词修饰、不得拼接、不得自造词组');
+        expect(spec?.content).not.toContain('gentle smile');
+        expect(spec?.content).not.toContain('shy expression');
         expect(spec?.content).toContain('puffy cheeks');
       }
     } finally {
@@ -934,6 +1004,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -974,6 +1045,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const messages = await buildAutoTagMessages(context(), 1, options, null);
@@ -1010,6 +1082,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -1054,6 +1127,7 @@ describe('auto tag prompt', () => {
       autoGenerate: true,
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: prompts(),
     };
     const oldBackend = settings.defaultBackend;
@@ -1092,6 +1166,7 @@ describe('提示词规范与出图渠道解耦', () => {
       autoGenerate: true,
       promptStyle,
       comfySpecNl,
+      facelessMale: false,
       prompts: prompts(),
     };
   }

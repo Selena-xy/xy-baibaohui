@@ -382,6 +382,12 @@ export interface AutoTagSettings {
    * ComfyUI 后端下不看这里:那里由当前工作流预设的 naturalLanguage 决定,以免多一个真相。
    */
   comfySpecNl: boolean;
+  /**
+   * 「无面男」:画面里男性与女性同框时,男性一律不露脸——不加表情与视线 tag,
+   * 改落一个 faceless male,把视觉焦点让给女性角色;nl 里也不描述他的面部。
+   * 男性单独出镜(画面内没有女性)时照常画脸。默认关。
+   */
+  facelessMale: boolean;
   /** 可编辑提示词集(破限/后端规范/思维链/预填充);空串 = 回落内置默认。 */
   prompts: AutoTagPrompts;
 }
@@ -426,11 +432,11 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 1girl, long hair, school uniform, sitting by window, classroom, warm sunlight
 从重要到次要排列：人数/主体 → 镜头构图 → 外貌 → 服饰 → 动作姿态 → 表情视线 → 场景 → 光线氛围；单个画面控制在 40 个 tag 以内；当「生成自然语言」开启时精简到 20～30 个——tag 只留人数/主体/构图/发色瞳色/关键服装/核心动作/表情视线/场景光，其余细节交给 nl。
 动作姿态内部再排：本画面核心动作（谁做了什么、身体部位接触了什么）必须是动作区第一条独立短 tag；辅助姿态（坐着、站着、跪着等）排后面。同一动作词不得重复写两遍。
-核心动作**本身也必须写成 danbooru 短 tag，绝不允许把接触点那句话原样翻成英文塞进 tag**——中文点明接触点只是帮你选对词，选完那句话就丢掉。对照改法："man's hand pressing deep into woman's waist" → groping, hand on another's waist；"man's fingers inserted into woman's pussy" → fingering；"man's hand tearing the crotch of woman's black pantyhose" → torn pantyhose；"boy holding yellow grab handle" → holding strap；"girl leaning back against boy's chest" → leaning back, against another。完整句子一律留给 nl，tag 里只放模型认得的词。
+核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's inner thigh、touching crotch、hand up skirt、fingering、penetration、tearing pantyhose、torn pantyhose、holding strap、kabedon、leaning back、leaning against another、orgasm。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
 - 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
-- 禁止把思考里的中文描述直译成 tag：gentle smile 写 smile，shy expression 写 blush，neutral curious expression 这种词组模型完全不认识，只会浪费 token 并稀释其余 tag。带形容词的自然语言感受留给 nl，tag 只放标准词。
+- 表情与视线一律从上面列表里**原样取用一个词**：不得加形容词修饰、不得拼接、不得自造词组——模型只认列表里的标准词，多写的修饰只会浪费 token 并稀释其余 tag。带形容词的自然语言感受留给 nl，tag 只放标准词。
 - 正文没写表情不是不写的理由——推断一个；判断为面无表情时也要显式写 expressionless。
 
 同人角色身份 tag：
@@ -529,11 +535,11 @@ tag（JSON 的 tag 键）：danbooru 短 tag——英文小写、逗号分隔的
 1girl, long hair, school uniform, sitting by window, classroom, warm sunlight
 从重要到次要排列：人数/主体 → 镜头构图 → 外貌 → 服饰 → 动作姿态 → 表情视线 → 场景 → 光线氛围；单个画面控制在 40 个 tag 以内。
 动作姿态内部再排：本画面核心动作（谁做了什么、身体部位接触了什么）必须是动作区第一条独立短 tag；辅助姿态（坐着、站着、跪着等）排后面。同一动作词不得重复写两遍。
-核心动作**本身也必须写成 danbooru 短 tag，绝不允许把接触点那句话原样翻成英文塞进 tag**——中文点明接触点只是帮你选对词，选完那句话就丢掉。对照改法："man's hand pressing deep into woman's waist" → groping, hand on another's waist；"man's fingers inserted into woman's pussy" → fingering；"man's hand tearing the crotch of woman's black pantyhose" → torn pantyhose；"boy holding yellow grab handle" → holding strap；"girl leaning back against boy's chest" → leaning back, against another。完整句子一律留给 nl，tag 里只放模型认得的词。
+核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's inner thigh、touching crotch、hand up skirt、fingering、penetration、tearing pantyhose、torn pantyhose、holding strap、kabedon、leaning back、leaning against another、orgasm。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
 - 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
-- 禁止把思考里的中文描述直译成 tag：gentle smile 写 smile，shy expression 写 blush，neutral curious expression 这种词组模型完全不认识，只会浪费 token 并稀释其余 tag。带形容词的自然语言感受留给 nl，tag 只放标准词。
+- 表情与视线一律从上面列表里**原样取用一个词**：不得加形容词修饰、不得拼接、不得自造词组——模型只认列表里的标准词，多写的修饰只会浪费 token 并稀释其余 tag。带形容词的自然语言感受留给 nl，tag 只放标准词。
 - 正文没写表情不是不写的理由——推断一个；判断为面无表情时也要显式写 expressionless。
 同人角色身份 tag：若角色明确来自已有动漫、游戏、小说等作品，必须在人数/构图之后、普通外貌之前写模型可识别的英文 Danbooru 身份 tag，格式为 character name (copyright name)。角色名与作品名使用其通行英文 tag，不转义圆括号，不得直译中文、缩写作品名或只写角色名。原创角色不写；无法可靠确定作品时不得猜测，按原创角色处理。
 显式场景 tag：当正文明确是 NSFW/性行为画面时，不能只写 nsfw、nude、sex 或含蓄动作。逐个写出画面中实际可见、与动作有关的身体部位和性器官（如 breasts、nipples、penis、pussy、anus、testicles），并用准确的 Danbooru 动作/接触 tag 说明谁的什么部位接触或进入哪里；性器官被衣物、身体或镜头完全遮住时不要虚构为可见。
@@ -668,7 +674,7 @@ E. 选段
 第三层｜落笔前自查（只核对，不预写答案）
 
 这一层只逐张核对下面几条，每点写一句结论即可。<thinking> 里禁止出现任何最终答案的草稿——不写完整 tag 串、不写完整 nl 句、更不要写出 JSON 对象或 "JSON:" 之类的标题。答案只在 </thinking> 之后出现一次，在思考里先写一遍等于把整份输出付两遍钱。核对完直接闭合 </thinking> 并输出 JSON：
-   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里没有英文句子或所有格短语（man's hand pressing... 这类），核心动作已落成 danbooru 短 tag；人数 tag 用的是 1boy 1girl / 2girls 这类标准词，没有 2people 这种自造总数。
+   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里全是 danbooru 短词，没有英文句子或所有格长短语；人数 tag 用的是 1boy 1girl / 2girls 这类标准词，没有 2people 这种自造总数。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
    - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。
    - 没有 pale skin、white skin、fair skin 这类白皙肤色词混进任何一张图（角色库字段里有也跳过不抄）：默认肤色已经够白，写了会白得发灰失真；角色真是晒黑/深肤色时用的 tan、dark skin 不在此列。
@@ -874,7 +880,7 @@ Each image must contain:
 - characters: an array of the characters actually visible in this image, ordered left-to-right then top-to-bottom. Every item is {"name":"...","tag":"...","nl":"..."}. Membership is decided by the frame, not by the library: a character who is visible but has no library profile still gets an entry (see rule 9). Names of library characters must follow the Name consistency rules below.
 
 Character Prompt rules:
-1. tag uses English danbooru tags for that character's identity, sex, fixed appearance, current outfit, expression, gaze, pose, action, visible anatomy, and necessary relative position. Use girl/boy rather than 1girl/2girls; numeric counts belong only in Base. Expression and gaze are mandatory for every character and must use real danbooru tags rather than invented descriptive phrases: pick expressions from smile, grin, laughing, blush, embarrassed, frown, pout, puffy cheeks, surprised, crying, tears, angry, serious, sad, worried, scared, smug, seductive smile, expressionless, half-closed eyes, open mouth, clenched teeth, winking, glaring, staring, tongue out, biting lip, drooling, sweat drop; pick one gaze from looking at viewer, looking at another, looking away, looking down, looking up, looking back, closed eyes. Write smile rather than gentle smile and blush rather than shy expression; phrases like neutral curious expression are not tags and only dilute the prompt. Save adjectival nuance for nl. When the story does not state an expression, infer one; write expressionless explicitly rather than omitting it.
+1. tag uses English danbooru tags for that character's identity, sex, fixed appearance, current outfit, expression, gaze, pose, action, visible anatomy, and necessary relative position. Use girl/boy rather than 1girl/2girls; numeric counts belong only in Base. Expression and gaze are mandatory for every character and must use real danbooru tags rather than invented descriptive phrases: pick expressions from smile, grin, laughing, blush, embarrassed, frown, pout, puffy cheeks, surprised, crying, tears, angry, serious, sad, worried, scared, smug, seductive smile, expressionless, half-closed eyes, open mouth, clenched teeth, winking, glaring, staring, tongue out, biting lip, drooling, sweat drop; pick one gaze from looking at viewer, looking at another, looking away, looking down, looking up, looking back, closed eyes. Use the listed words verbatim — never add adjectives, combine them, or invent phrases; anything outside the list only dilutes the prompt. Save adjectival nuance for nl. When the story does not state an expression, infer one; write expressionless explicitly rather than omitting it.
 2. First decide whether the named character is an original character or a fandom character. Treat a character as fandom only when the character card, lorebook, story, or an unambiguous well-known name reliably identifies an existing anime, game, novel, or other work. If the work is uncertain, do not guess; treat the character as original.
 3. For every fandom character, the model-recognized English Danbooru identity tag, formatted exactly as character name (copyright name), must be the first tag in that character's tag. The identity tag is stored in the fixed appearance library: when creating the entry (changes field:"new"), register it as the fields.fandom of that entry; when an existing entry lacks it and the character is fandom, add it via a changes item with field:"fandom"; then copy it verbatim every time. Do not escape the parentheses for NovelAI, do not translate the names literally, do not abbreviate the copyright, and do not put this per-character identity tag in Base. Original characters receive no copyright identity tag and no fandom field.
 4. For an explicit NSFW scene. Do not rely on vague tags such as nsfw, nude, or sex: name each actually visible, action-relevant anatomical feature or genital in the owning character's tag, such as breasts, nipples, penis, pussy, anus, or testicles. Do not claim fully covered or out-of-frame anatomy is visible.
@@ -1114,6 +1120,7 @@ function defaults(): ImageSettings {
       // 默认跟随出图渠道:老配置 hydrate 后行为与上线前完全一致
       promptStyle: 'auto',
       comfySpecNl: false,
+      facelessMale: false,
       prompts: {
         jailbreak: '',
         naiSpec: '',
@@ -1620,6 +1627,8 @@ function normalize(raw: unknown): ImageSettings {
         ? rt.promptStyle
         : d.autoTag.promptStyle,
     comfySpecNl: typeof rt.comfySpecNl === 'boolean' ? rt.comfySpecNl : d.autoTag.comfySpecNl,
+    // 「无面男」:老配置无此键 → false(照常画脸),行为不变。
+    facelessMale: typeof rt.facelessMale === 'boolean' ? rt.facelessMale : d.autoTag.facelessMale,
     // 可编辑提示词集:逐字段兜底;旧版 jailbreakPrompt 字段迁移进 prompts.jailbreak
     prompts: (() => {
       const rp = (rt.prompts ?? {}) as Partial<AutoTagPrompts>;

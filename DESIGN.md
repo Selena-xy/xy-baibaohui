@@ -35,6 +35,18 @@
 
 > 注：P6（8/8 张全 `medium shot`、取景无变化）经判断属于封闭场景下的合理选择，**刻意不改**。
 
+### 0.4 第二轮实跑回归 + 「无面男」开关（v0.2.7）
+
+拿第二份导出（`promptStyle='comfyui'`、单楼 1～3 张、11 张图）复核，处理四件事：
+
+1. **删掉核心动作段的「before → after」对照改法**。上一版给的是「`man's hand pressing deep into woman's waist` → `groping, hand on another's waist`」这种写法，实测**模型把前半句也抄进了 tag**（漏出 `1boy's hand pressing deep into 1girl's waist`、`1boy holding strap`），而且这些例子的主语（man/woman/boy/girl）还带出了「拿数量词当绑定锚点」的副作用（`white t-shirt on 1boy`）。改为**只给正面词表**（`groping`、`hand on another's waist`、`touching crotch`、`fingering`、`penetration`、`tearing pantyhose`、`kabedon`、`leaning against another` 等），并把自查里的反面句子引用一并去掉。
+   > 结论沉淀：**「禁止某个 token」有效（`2people` 一次就消失），「展示一句反面短语」会泄漏**（`gentle smile`、句子对照都被照抄过）。规范里不再出现任何反面例子。
+2. **表情词改为「原样取用一个词」的正向表述**（D）。旧文案用「`gentle smile` 写 `smile`」示范，`gentle smile` 反而出现在 5/11 张图里；改成「从列表原样取用、不得加形容词/拼接/自造」后，反面例子从规范中彻底消失。
+3. **新增「无面男」开关**（`settings.autoTag.facelessMale`，默认关）：开启后，画面里**男性与女性同框时男性不画脸**——不加表情与视线，改落一个 `faceless male`，把视觉焦点让给女性角色，nl 里同样不描述他的面部；男性单独出镜时照常画脸。默认关 ⇒ 存量配置行为逐字节不变。
+   - 两处下发缺一不可：任务协议里给输出口径（`facelessMaleRule`），**思维链末尾**再追加一条「优先于以上所有条目」的覆盖块。因为思维链是最后一条 system 且通篇要求「每个在场角色都必须有表情词和视线词」，只在协议里写会被它压回来。
+   - 覆盖块用追加（而非改常量）实现，因此对三份内置思维链和用户自定义思维链一律生效。
+4. **人数 tag 与绑定锚点的两个残留问题**（`2girls` 与 `1boy 1girl` 并存、用 `1girl`/`1boy` 当锚点）经确认**本轮不动**——归入观察项，留待下一轮实跑再做判断。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

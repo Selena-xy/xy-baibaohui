@@ -55,4 +55,19 @@ describe('提示词规范与出图渠道解耦', () => {
     const settings = await hydrateWith({ comfySpecNl: 'yes' });
     expect(settings.autoTag.comfySpecNl).toBe(false);
   });
+
+  it('存量配置没有 facelessMale → false(照常画脸),升级后行为不变', async () => {
+    const settings = await hydrateWith({ enabled: true });
+    expect(settings.autoTag.facelessMale).toBe(false);
+  });
+
+  it('facelessMale 写坏 → 回落 false', async () => {
+    const settings = await hydrateWith({ facelessMale: 'on' });
+    expect(settings.autoTag.facelessMale).toBe(false);
+  });
+
+  it('facelessMale 显式开启 → 原样保留', async () => {
+    const settings = await hydrateWith({ facelessMale: true });
+    expect(settings.autoTag.facelessMale).toBe(true);
+  });
 });

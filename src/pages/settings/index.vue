@@ -634,6 +634,14 @@ async function confirmUpdate() {
         </label>
         <p class="bbi-field-hint">写入 tag 后立即按当前出图渠道自动出图;关闭则只写 tag,在卡片上手动生成。</p>
 
+        <label class="bbi-switch-row">
+          <span class="bbi-field-label">无面男</span>
+          <input v-model="settings.autoTag.facelessMale" type="checkbox" class="bbi-checkbox" />
+        </label>
+        <p class="bbi-field-hint">
+          男女同框时男性一律不画脸（落 faceless male、不写表情与视线），把视觉焦点让给女性角色；nl 里也不描述他的面部。男性单独出镜时照常画脸。
+        </p>
+
         <label class="bbi-num-row">
           <span class="bbi-field-label">携带最近 AI 楼数</span>
           <input

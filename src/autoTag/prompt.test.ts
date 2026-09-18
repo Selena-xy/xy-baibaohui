@@ -313,7 +313,7 @@ describe('auto tag prompt', () => {
   // 实跑回归(pingran 那份导出)暴露的问题,逐条钉死在文案里:
   // 1) 2people 是自造 tag(danbooru 没有) 2) 核心动作被写成英文长句
   // 3) 建档字段混进 178cm / professional cosplayer / 盘发 / cosplay 这身衣服
-  // 4) 库里 fandom 必须与发给出图模型的是同一个转义形态(存档丢反斜杠 → 同人形象不稳)
+  // 4) 身份 tag 圆括号一律不转义(实测加转义会把整套官方设定硬套上去、压掉细节)
   it('locks the run-regression fixes into the built-in prompts', async () => {
     const options: AutoTagSettings = {
       enabled: true,
@@ -347,10 +347,11 @@ describe('auto tag prompt', () => {
       expect(all).toContain('盘发、扎发这类造型是临时状态，不算长期发型');
       expect(all).toContain('cosplay、制服、礼服等只在某段剧情里穿的服饰');
       expect(all).toContain('留空比写错安全');
-      // 4) 库里的 fandom 与落进画面 tag 的是同一个转义形态(存档不得丢反斜杠)
-      expect(all).toContain('写进档案的 fandom 就是最终发给 ComfyUI 的那个形态');
-      expect(all).toContain('存档时绝不把反斜杠去掉');
-      expect(all).toContain('写进档案 changes 的 fields.fandom 用同一个转义形态');
+      // 4) 身份 tag 圆括号一律不转义,档案与画面 tag 同形态
+      expect(all).toContain('圆括号**保持原样、一律不转义**');
+      expect(all).toContain('写进档案的 fandom 与落进画面 tag 的是同一个形态');
+      expect(all).toContain('括号保持原样、不加任何反斜杠');
+      expect(all).not.toContain('括号必须转义');
     } finally {
       settings.defaultBackend = oldBackend;
     }
@@ -444,7 +445,7 @@ describe('auto tag prompt', () => {
     const oldBackend = settings.defaultBackend;
     const oldModel = settings.nai.model;
     try {
-      // ComfyUI:身份 tag 定词 + 括号转义提醒 + negative 条件自查(只有 Comfy 工作流会有
+      // ComfyUI:身份 tag 定词 + 圆括号不转义 + negative 条件自查(只有 Comfy 工作流会有
       // negative 键);Comfy spec 无 NSFW 条款,思维链也不加。
       settings.defaultBackend = 'comfyui';
       let text = (await buildAutoTagMessages(context(), 1, options, null))
@@ -452,17 +453,18 @@ describe('auto tag prompt', () => {
         .join('\n');
       expect(text).toContain('判定为同人时同一行定出最终身份 tag 词');
       expect(text).toContain(
-        '每个同人角色的 tag 串里都有 B 段定下的 character name \\(copyright name\\) 身份 tag',
+        '每个同人角色的 tag 串里都有 B 段定下的 character name (copyright name) 身份 tag',
       );
       expect(text).toContain('若本图协议含 negative 键');
       // 改动 1:ComfyUI 规范/思维链补了显式 NSFW 解剖落点(与 NAI 共用这条自查,
       // 但 Comfy 不要求 source#/target#)。这条从「不出现」变「出现」是刻意为之。
       expect(text).toContain('若本图是显式 NSFW 场景');
-      // spec 的转义指导必须原样到达模型:模板字符串里 \( 会被烹饪成 (,
-      // 0.1.16 起这条实际发给模型的就是未转义括号,一直是坏的。
-      expect(text).toContain('实际提示词形态为 character name \\(copyright name\\)');
-      expect(text).toContain('"character name \\\\(copyright name\\\\)"');
-      expect(text).not.toContain('形态为 character name (copyright name)');
+      // 身份 tag 圆括号一律不转义(实测加转义会把整套官方设定硬套上去、压掉细节):
+      // 旧版「必须转义 + 反斜杠示例」那套写法必须彻底消失。
+      expect(text).toContain('格式为 character name (copyright name)');
+      expect(text).toContain('括号保持原样未转义');
+      expect(text).not.toContain('括号必须转义');
+      expect(text).not.toContain('双反斜杠经 JSON 解析才保留单个反斜杠');
       // 白皙肤色词禁令只给 ComfyUI:本地模型默认肤色已够白,再叠 pale skin 会白得失真。
       expect(text).toContain('白皙词一律禁止');
       expect(text).toContain('白皙肤色词混进任何一张图');
@@ -760,8 +762,8 @@ describe('auto tag prompt', () => {
       expect(text).toContain('dark trousers on black hair boy');
       // 示例是规则的靠山:只有条文没有示例时模型照抄不到写法。
       expect(text).toContain('多人 tag 示例');
-      // NAI 不吃 ComfyUI 的权重括号转义,那条不该跟着复制过来。
-      expect(text).not.toContain('ComfyUI 会把未转义圆括号当作权重语法');
+      // 圆括号不转义已是两套规范的共识,旧的「ComfyUI 必须转义」条文不该再出现。
+      expect(text).not.toContain('括号必须转义');
       // 排序统一到「构图紧跟人数」口径:与 Comfy 一致,也与多人规则原文一致;
       // 旧的「镜头构图放末尾」排序表和示例曾与此自相矛盾。
       expect(text).toContain('人数/主体 → 镜头构图 → 外貌');

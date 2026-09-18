@@ -38,8 +38,8 @@ import {
  * 与出图渠道**解耦**(见 settings.ts 的 PromptStyle 注释):'auto' 仍跟随 defaultBackend,
  * 与旧版逐字节一致;显式选了 comfyui / nai 就压过渠道。存在的理由是「NAI 协议 +
  * ComfyUI 系底模」这类兼容站——它把 char_captions 压平成单串再送进工作流,NAI 规范
- * 明令禁止的邻接绑定反而是那里唯一可用的多角色区分手法;身份 tag 也得按 ComfyUI 口径
- * 转义圆括号(裸括号会被 CLIPTextEncode 当权重语法,身份 tag 当场被拆散)。
+ * 明令禁止的邻接绑定反而是那里唯一可用的多角色区分手法。身份 tag 的圆括号两边一致
+ * 都不转义——实测给括号加转义会把整套官方设定硬套上去、压掉其余细节描写。
  *
  * 返回 '' 表示该后端没有专属规范(webui 等),此时不占消息位。
  * ⚠ 规范与思维链必须成对取(两者共用本函数):思维链的槽位块要填的字段,得在同一份
@@ -240,7 +240,7 @@ export async function buildAutoTagMessages(
 
   const libraryReferenceRule = naiCharPromptsOn
     ? '- If a visible character exists in the fixed appearance library or is created in this changes array, copy the fixed fields into that character own characters[].tag; keep appearance wording verbatim but convert 1girl/1boy to girl/boy. The fandom identity tag (fields.fandom) goes first, verbatim. Do not put them in Base or assign them to another character. Library natural-language notes may inform that character nl. Use the library entry name verbatim for characters[].name and for any name inside tag/nl — never transliterate, translate, or vary it.'
-    : '- 画面中的角色只要已在【角色固定外貌库】，或在本次 changes 中建了档，tag 与 nl 就必须照抄库中/刚建档的字段值，用词一字不改，不得自行改写或增删其固定外貌。fandom 字段只作档案记录，ComfyUI 画图时不照抄它，同人身份 tag 按下发的 ComfyUI 规范现场判定并按规范转义括号。\n   - 同一角色的固定外貌在一张图里只写一遍：同一图内再次提到他时用简短指代（the boy、the silver-haired girl）承接，禁止把整串外貌重复第二遍——重复会让模型以为画面里有多个同样的人，把一个人画成互不相连的几块。';
+    : '- 画面中的角色只要已在【角色固定外貌库】，或在本次 changes 中建了档，tag 与 nl 就必须照抄库中/刚建档的字段值，用词一字不改，不得自行改写或增删其固定外貌。fandom 字段只作档案记录，ComfyUI 画图时不照抄它，同人身份 tag 按下发的 ComfyUI 规范现场判定（括号不加转义）。\n   - 同一角色的固定外貌在一张图里只写一遍：同一图内再次提到他时用简短指代（the boy、the silver-haired girl）承接，禁止把整串外貌重复第二遍——重复会让模型以为画面里有多个同样的人，把一个人画成互不相连的几块。';
   const newCharacterNlRule = naiCharPromptsOn
     ? '\n   - NAI V5 profile requirement: every field:"new" change must include a non-empty nl containing a concise English natural-language description of the character fixed appearance. The name must be the character exact name from the card/lorebook/story — a Chinese name stays Chinese (小雪), never pinyin or translation. Fandom characters must also include their identity tag in fields.fandom, e.g. {"name":"冬海","field":"new","fields":{"sex":"1girl","hair":"long black hair","eyes":"blue eyes","fandom":"kasumi (blue archive)"},"nl":"A girl with long black hair and blue eyes.","position":"P2","reason":"first appearance"}; original characters omit fandom. If an existing library entry lacks fandom but the character is fandom, report a changes item with field:"fandom". Describe only fixed appearance: no current outfit, pose, or location — temporary states never enter the profile.'
     : '';

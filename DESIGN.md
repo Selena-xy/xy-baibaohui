@@ -82,6 +82,29 @@
 
 4. **同人身份 tag 转义格式与纯小写回归**：按用户实际出图需求，ComfyUI 下同人角色身份 tag 改回带斜杠转义格式 `shorekeeper \(wuthering waves\)`（未转义括号会被 ComfyUI CLIPTextEncode 当作权重语法拆散）。同时增加**全英文小写禁令**（词语内严禁大写字母）：实跑中模型把同人词写成了 `Shorekeeper (Wuthering Waves)` 包含多处大写，规范和思维链均明确严禁任何大写，一律写成纯小写。
 
+### 0.7 第五轮实跑回归（v0.2.7）
+
+拿第五份导出（新正文：上海地铁 + 贝尔法斯特 cosplay，16 个 AI 楼 / **51 张图**）复核。先记验收——0.6 的 A/B/C 三条**全部守住**（D 那条 `size` 词不入 tag 本轮复发，见下第 1 条）：51 张图的 tag 串里大写字母 **0 次**、`belfast \(azur lane\)` 转义小写格式 **51/51 张**落地、锚点自我绑定 **0 次**、表情与视线接 `on` **0 次**、单张 tag 数 12～25（都远在 40 以内）。
+
+本轮新暴露四类问题 + 两处连续性偏差，全部只动内置文案：
+
+1. **`portrait` / `landscape` 又写回 tag 串的构图位（3/51 张，同一楼）**。0.5 的 D 已经修过一次、第四轮验收也过了，这轮复发——根因不在那条禁令，而在思维链槽位块的前言：「槽位值直接写你最终要放进 tag 的英文词」，而 `size` 本身就是七个槽位之一。改法：前言里显式豁免 `size` 槽位（「**size 槽位例外**：它只写进 JSON 的 size 键，绝不进 tag 串」），三份思维链同步。
+   > 沉淀：**「槽位值就是 tag 词」这种全局句会盖过后面某一条槽位的局部禁令**——局部禁令要写在它自己那一处，而不是只在别处声明。
+2. **画面里出现第三个可见人物时人数 tag 崩了（1/51 张）**：那一楼的正文里，车厢连接处站着一位盯着抢单界面的外卖骑手，模型把人数写成 `1boy 1girl, 1boy`——既没说清第三个人，又把同一个数量词写了两遍（正确写法是 `2boys 1girl`）。改法：人数词表补齐混合计数（`2boys 1girl` / `1boy 2girls` / `2boys 2girls` / `multiple boys` / `multiple girls`），并加一条「**人数 tag 要覆盖画面里所有可见人物，且每个数量词只写一次**」——站在画面里、没被虚化成一片的第三者（店员、路人、外卖骑手）也要算进去，只有模糊成一片的人群才不计数；思维链人物槽与第三层自查同步。V5 那份 Base 也补了同一条（`a third person visible inside the frame makes the count 2boys 1girl, never 1boy 1girl, 1boy`）。
+3. **配角的锚点是编出来的（1/51 张）**：正文只给了「外卖骑手 + 黄色制服 + 头盔」，模型据此推出 `yellow hair boy` 当锚点（把**制服颜色**当成了发色），再用它绑定 `yellow hair boy serious` / `yellow hair boy looking at phone`。改法：加「**锚点只能是正文/设定给出的发色或瞳色**」——不得从服装、道具的颜色推出发色（写了 `yellow jacket` 不等于 `yellow hair`），也不得给没有设定的配角编一个发色；配角没有明确发色时用身份词（`man`/`boy`/`passerby`）或直接裸写他独有的可见特征（`yellow jacket`、`helmet`）——配角独有的特征不会认错人，本来就不需要绑定。
+4. **绑定被推广到三类不该绑的词上**（本轮最值钱的一条）。0.5 的 A 条款把绑定写成了无条件义务，这轮它溢出了边界：
+   - **生理效果词**：`sweat on silver hair girl`、`tears on silver hair girl`、`drooling on silver hair girl`、`messy hair on silver hair girl`——效果词不会把两个人的特征搞混，接上 `on` 只变成模型没见过的词组；
+   - **状态与接触类动作词**：`hand up skirt on black hair boy`、`touching crotch on black hair boy`、`biting earlobe on black hair boy`、`supporting another on black hair boy`——0.5 的 B 条款明明写着「互动类动作不需要再加主人」，但模型把状态词也当成了需要主人的单人动作；其中 `panties aside on black hair boy` 最严重：**内裤是女方的**，挂到男方身上会被画成男方穿着内裤；
+   - **单人画面里的解剖词**：`penis on black hair boy` 出现在一张 `1boy` 单人图里（同类还有 `1girl` 单人图里的 `large breasts on silver hair girl`、`blue maid dress on silver hair girl`）——只有一个主体时自我绑定纯属白占 token。
+   改法：把绑定范围写死——「**绑定只在两人及以上同框时才用**」，单人画面所有特征裸写；另立一条「**下面三类词永远不绑定，裸写即可**」逐类点名（效果词 / 状态与接触动作词 / 单人画面的解剖词）；再加「**动作词与部位不得拼成一条**」——`groping breasts on …`、`squeezed breasts on …` 这种把动作和绑定部位粘起来的写法不是 danbooru 词，要拆成 `groping` + `breasts on <发色词>` 两条。
+   > 与 0.4/0.5 同一纪律：这条只写 token 级禁令（「不许给 `panties aside` 这类词接 `on <发色词>`」），**不写出被泄漏的那整条短语**。
+5. **同一件衣服/饰品在同楼内换名字**：颈饰在 `choker` / `black choker` / `black leather choker` / `black leather collar` 之间来回换，还有一张干脆写成 `black neck ribbon`（正文写的是黑色皮质项圈）；裤袜在 `black pantyhose` / `sheer black pantyhose` / `sheer black thigh high stockings` 之间换（正文写的是**过膝袜**，带蕾丝防滑边，不是连裤袜）；还有一张把整件 `blue maid dress` 换成了 `corset`（正文里的硬质紧身胸衣是长裙的胸衣部分，不是独立外穿件）——那张图的裙子就此消失。改法：加「**同一件服装/饰品的措辞整楼逐字复用**」——同一样东西定下哪种说法整楼都用哪种，同义词改写等于换了件衣服；裤袜按正文区分连裤与过膝袜（`pantyhose` vs `thigh high stockings`），视觉指纹里也补上「款式」这一维；局部件是补充不是替代，整件裙装的指纹照旧要写全。
+6. **不露脸的局部特写没有表情与视线（3/51 张）**：一张只拍腿、一张只拍十指相扣的手、一张只拍男方下身——模型都没写表情与视线，而规范里写的是「每张图都要写，不得省略」，第三层自查也点名「没有漏掉表情、视线」。这三张的取舍其实是对的（硬写 `expressionless` 只会让模型给没脸的地方塞一张脸）。改法：给表情与视线那条加例外——**画面里根本不出现脸的局部特写（只拍手、腿、脚、道具）允许省略**，第三层自查同步放宽。
+7. **规范里的具体例子被照抄进画面（第 2、3 次实证）**：`1boy 1girl` 的绑定举例里原先写着「`silver hair girl` 的 `blue and black gradient dress`、`sheer black pantyhose`、`silver strappy high heels`…」，那是**第三轮那位角色的真实行头**。第四轮的 13 张双人图整片照抄了这三个词；本轮换成地铁 cosplay 这一场后，正文写的是过膝袜，前两张图仍然写出了 `black pantyhose` / `sheer black pantyhose`——例子泄漏了。改法：把举例里的锚点与单品全部换成中性占位（`green hair girl` + `white dress` / `long skirt` / `high heels`），并加一条元规则——「**本规范里出现的发色与单品全是占位例子**，绝不许照抄进画面」；任务协议里 `large breasts on silver hair girl` 那条同样改成 `green hair girl`。
+   > 例子的正面价值仍然保留（0.4 的结论是「展示反面短语会泄漏」，不是「不能给正面例子」），但**例子必须与任何一次真实出场都对不上**，泄漏才可被发现。
+
+> 观察项（本轮不动）：nl 多人三段式的收尾句 `blurred in the background` 依旧稀疏；`cosplay` 这个 tag 前 8 张有、之后消失，属第 5 条同一类（措辞漂移），本轮只立规则、不改取值口径。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

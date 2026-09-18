@@ -286,7 +286,7 @@ describe('auto tag prompt', () => {
     expect(thinkingMsg?.content).toContain('按正文 P 位置维护每个角色的临时服装');
     expect(thinkingMsg?.content).toContain('视觉指纹');
     expect(thinkingMsg?.content).toContain('版型/剪裁 + 主色 + 关键部件');
-    expect(thinkingMsg?.content).toContain('裤袜含颜色与透明度');
+    expect(thinkingMsg?.content).toContain('裤袜含款式、颜色与透明度');
     expect(thinkingMsg?.content).toContain('模型会自行重新设计的孤立词');
     // 槽位侧同样要挡住笼统词,否则 C 段定了 navy school blazer、槽位里仍退回 school uniform。
     expect(thinkingMsg?.content).toContain('槽位里不许退回 school uniform、dress、pantyhose 这种笼统孤立词');
@@ -399,12 +399,12 @@ describe('auto tag prompt', () => {
       expect(all).toContain('男女同框（1boy 1girl）与两人同性是同一个标准');
       expect(all).toContain('凡「只有其中一人会有的东西」都要带上主人');
       expect(all).toContain('large breasts');
-      expect(all).toContain('都写成 on silver hair girl');
+      expect(all).toContain('都写成 on green hair girl');
       expect(all).toContain('裸写的裙袜、胸部与体型会被模型摊给同框的另一个人');
       // 库照抄与邻接绑定撞车时模型选了「一字不改」,故规范与协议两处都点明照抄不豁免绑定。
       expect(all).toContain('照抄不豁免绑定');
       expect(all).toContain('照抄不豁免多人绑定');
-      expect(all).toContain('large breasts on silver hair girl');
+      expect(all).toContain('large breasts on green hair girl');
 
       // B) 词表逐字照抄 + 表外动作按阶梯回落。another 被改写成 girl's/boy's 是实跑原样,
       //    所以这里只写「禁止某个 token」,不展示那条反面短语(展示了会被照抄)。
@@ -502,6 +502,118 @@ describe('auto tag prompt', () => {
       expect(naiText).toContain('绑定一律用称谓前缀写法');
       expect(naiText).toContain('同一场互动只写一个主词');
       expect(naiText).toContain('体型只用短词逐个写');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
+  });
+
+  // 第五轮实跑(新导出:16 个 AI 楼 / 51 张图,正文换成地铁贝尔法斯特 cosplay 那一场)。
+  // 先记验收:0.6 的四条全部守住——51 张图里大写 0 次、`belfast \(azur lane\)` 转义小写 100% 落地、
+  // 锚点自我绑定 0 次、表情/视线 0 次接 on、tag 数 12~25 且 size 词 0 泄漏(第四轮那种)。
+  // 新暴露四类问题:
+  // E) 同一楼三张图把 portrait/landscape 又写回了 tag 串的构图位(第三轮 0.5-3 修过一次,
+  //    根因是思维链槽位前言写着「槽位值直接写你最终要放进 tag 的英文词」,而 size 本身就是七个槽位之一);
+  // F) 画面里出现第三个可见人物(外卖骑手)时人数 tag 写成 `1boy 1girl, 1boy`——既没说清第三人,
+  //    又把同一个数量词写了两遍(标准写法是 2boys 1girl);
+  // G) 配角的锚点是编出来的:正文只写了黄色制服与头盔,模型推出 `yellow hair boy` 当锚点;
+  // H) 绑定被推广到三类不该绑的词上——生理效果(sweat/tears/drooling/messy hair on …)、
+  //    状态与接触动作(panties aside on black hair boy 甚至把女方的内裤挂到了男方身上)、
+  //    单人画面里的解剖词(penis on black hair boy 出现在 1boy 单人图里);
+  //    还出现把动作与部位粘成一条的 groping breasts on … / squeezed breasts on …。
+  // 另有两处:服装措辞在同楼内漂移(pantyhose/thigh high stockings、choker/collar/neck ribbon,
+  // 还有一张把整件 blue dress 换成了 corset)、不露脸的局部特写(手/腿)干脆没写表情与视线。
+  it('locks the round-5 run fixes: count coverage, no ghost anchors, binding scope, wording reuse', async () => {
+    const options: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      facelessMale: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const all = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+
+      // E) size 槽位不得被当成 tag 词:槽位前言必须显式豁免它。
+      expect(all).toContain('**size 槽位例外**：它只写进 JSON 的 size 键，绝不进 tag 串');
+      expect(all).toContain('portrait / landscape 只写在 size 键里，tag 串里不得出现这两个词');
+
+      // F) 人数 tag 覆盖取景框内所有可见人物(含没被虚化的第三者)且每个数量词只写一次。
+      expect(all).toContain('**人数 tag 要覆盖画面里所有可见人物，且每个数量词只写一次**');
+      expect(all).toContain('三人同框写 2boys 1girl 或 1boy 2girls');
+      expect(all).toContain('2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls');
+      expect(all).toContain('2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，同一个数量词也不许写两遍');
+      expect(all).toContain('没有把同一个数量词写两遍');
+
+      // G) 锚点只能来自正文/设定的发色瞳色,不许从服装颜色推、也不许给配角编。
+      expect(all).toContain('**锚点只能是正文/设定给出的发色或瞳色**');
+      expect(all).toContain('写了 yellow jacket 不等于 yellow hair');
+      expect(all).toContain('也不得给没有设定的配角编一个发色来当锚点');
+
+      // H) 绑定范围:单人画面裸写;效果词/状态接触动作词/单人解剖词免绑定;动作与部位不许粘成一条。
+      expect(all).toContain('**绑定只在两人及以上同框时才用**');
+      expect(all).toContain('**下面三类词永远不绑定，裸写即可**');
+      expect(all).toContain('生理效果词（sweat、tears、drooling、blush、wet、messy hair 等）');
+      expect(all).toContain('状态与接触类动作词（panties aside、hand up skirt、touching crotch');
+      expect(all).toContain('单人画面里的解剖词（penis、breasts、pussy 等）');
+      expect(all).toContain('**动作词与部位不得拼成一条**');
+      // 只写 token 级禁令,不展示被泄漏的那整条(0.4 的结论:展示反面短语会泄漏)。
+      expect(all).not.toContain('panties aside on black hair boy');
+
+      // 服装措辞整楼复用 + 局部件不替代整件 + 裤袜款式按正文区分。
+      expect(all).toContain('**同一件服装/饰品的措辞整楼逐字复用**');
+      expect(all).toContain('pantyhose 是连裤、thigh high stockings 是过膝袜');
+      expect(all).toContain('不能只留一个 corset 把裙子省掉');
+
+      // 例子只是占位:本轮又一次实证(spec 例子里的 sheer black pantyhose 被照抄进正文写「过膝袜」的画面)。
+      expect(all).toContain('本规范里出现的发色与单品全是**占位例子**');
+      expect(all).toContain('绝不许把它们照抄进画面');
+      expect(all).not.toContain('sheer black pantyhose');
+      expect(all).not.toContain('blue and black gradient dress');
+
+      // 不露脸的局部特写允许省略表情与视线。
+      expect(all).toContain('画面里根本不出现脸的局部特写——只拍手、腿、脚、道具——允许省略表情与视线');
+      expect(all).toContain('画面里根本不出现脸的局部特写（只拍手、腿、脚、道具）写 "-" 即可');
+
+      // 思维链三处同步(槽位前言/人物槽/第三层自查),少一处模型就会在那一层把规则丢回来。
+      expect(all).toContain('人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls）');
+      expect(all).toContain('绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）');
+      expect(all).toContain('锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色');
+      expect(all).toContain('同一件服装/饰品的措辞与上一张图一致');
+
+      // 两份中文规范(ComfyUI / NAI 4 单串)必须同步改,少一份就有一条链路漏改。
+      settings.defaultBackend = 'nai';
+      settings.nai.model = 'nai-diffusion-4-full';
+      const naiText = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(naiText).toContain('**人数 tag 要覆盖画面里所有可见人物，且每个数量词只写一次**');
+      expect(naiText).toContain('**绑定只在两人及以上同框时才用**');
+      expect(naiText).toContain('**锚点只能是正文/设定给出的发色或瞳色**');
+      expect(naiText).toContain('**同一件服装/饰品的措辞整楼逐字复用**');
+      expect(naiText).toContain('**size 槽位例外**：它只写进 JSON 的 size 键，绝不进 tag 串');
+      expect(naiText).not.toContain('panties aside on black hair boy');
+
+      // V5 那份是 Base + Character Prompts,不适用邻接绑定;但人数词表与「只写一次」同样要下发。
+      settings.nai.model = 'nai-diffusion-5-full';
+      const v5Text = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(v5Text).toContain('a third person visible inside the frame makes the count 2boys 1girl, never 1boy 1girl, 1boy');
+      expect(v5Text).toContain('每个数量词只写一次，不得出现 1boy 1girl, 1boy 这种重复');
+      // 绑定那套措辞绝不许漏进 V5(它靠 Character Prompt 隔离,不看邻接)。
+      expect(v5Text).not.toContain('绑定只在两人及以上同框时才用');
+      expect(v5Text).not.toContain('on green hair girl');
     } finally {
       settings.defaultBackend = oldBackend;
       settings.nai.model = oldModel;

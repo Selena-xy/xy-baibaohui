@@ -56,7 +56,7 @@
 在 SillyTavern 的「扩展 → 安装扩展」里填入本仓库地址即可：
 
 ```
-https://github.com/saber3818717531-sudo/xy-baibaohui
+https://github.com/Selena-xy/xy-baibaohui
 ```
 
 安装后进入「设置」页：先到「渠道」页配置出图渠道（本地 ComfyUI 或 NovelAI 账号），再确认「自动生成 tag」开关已打开，就可以开始自动配图了。设置会随 SillyTavern 保存在服务器，跨设备自动同步。
@@ -101,5 +101,5 @@ https://github.com/saber3818717531-sudo/xy-baibaohui
 
 ---
 
-原作者：柏柏 · 本 fork 维护：saber3818717531-sudo
+原作者：柏柏 · 本 fork 维护：Selena-xy
 欢迎反馈与建议。

@@ -12,7 +12,7 @@ const CURRENT_VERSION = PLUGIN_VERSION;
 // 指回上游等于让「检查更新」用柏柏的原版覆盖掉这里的定制改动,
 // 故与 manifest.json 的 homePage 一同指向本 fork 仓库,改仓库名时两处要一起动。
 const REMOTE_MANIFEST_URL =
-  'https://raw.githubusercontent.com/saber3818717531-sudo/xy-baibaohui/main/manifest.json';
+  'https://raw.githubusercontent.com/Selena-xy/xy-baibaohui/main/manifest.json';
 
 export const updateState = reactive({
   current: CURRENT_VERSION,

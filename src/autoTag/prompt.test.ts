@@ -357,11 +357,12 @@ describe('auto tag prompt', () => {
       expect(all).toContain('盘发、扎发这类造型是临时状态，不算长期发型');
       expect(all).toContain('cosplay、制服、礼服等只在某段剧情里穿的服饰');
       expect(all).toContain('留空比写错安全');
-      // 4) 身份 tag 圆括号一律不转义,档案与画面 tag 同形态
-      expect(all).toContain('圆括号**保持原样、一律不转义**');
+      // 4) 身份 tag 圆括号必须加反斜杠转义且全小写无大写,档案与画面 tag 同形态
+      expect(all).toContain('圆括号必须加反斜杠转义');
+      expect(all).toContain('词语内严禁大写，全都是小写');
+      expect(all).toContain('shorekeeper \(wuthering waves\)');
       expect(all).toContain('写进档案的 fandom 与落进画面 tag 的是同一个形态');
-      expect(all).toContain('括号保持原样、不加任何反斜杠');
-      expect(all).not.toContain('括号必须转义');
+      expect(all).not.toContain('圆括号**保持原样、一律不转义**');
     } finally {
       settings.defaultBackend = oldBackend;
     }
@@ -656,18 +657,18 @@ describe('auto tag prompt', () => {
         .join('\n');
       expect(text).toContain('判定为同人时同一行定出最终身份 tag 词');
       expect(text).toContain(
-        '每个同人角色的 tag 串里都有 B 段定下的 character name (copyright name) 身份 tag',
+        '每个同人角色的 tag 串里都有 B 段定下的 character name \(copyright name\) 身份 tag',
       );
       expect(text).toContain('若本图协议含 negative 键');
       // 改动 1:ComfyUI 规范/思维链补了显式 NSFW 解剖落点(与 NAI 共用这条自查,
       // 但 Comfy 不要求 source#/target#)。这条从「不出现」变「出现」是刻意为之。
       expect(text).toContain('若本图是显式 NSFW 场景');
-      // 身份 tag 圆括号一律不转义(实测加转义会把整套官方设定硬套上去、压掉细节):
-      // 旧版「必须转义 + 反斜杠示例」那套写法必须彻底消失。
-      expect(text).toContain('格式为 character name (copyright name)');
-      expect(text).toContain('括号保持原样未转义');
-      expect(text).not.toContain('括号必须转义');
-      expect(text).not.toContain('双反斜杠经 JSON 解析才保留单个反斜杠');
+      // 身份 tag 圆括号必须加反斜杠转义且全小写
+      expect(text).toContain('格式为 character name \(copyright name\)');
+      expect(text).toContain('括号已加反斜杠转义且全小写无大写');
+      expect(text).toContain('shorekeeper \(wuthering waves\)');
+      expect(text).toContain('双反斜杠经 JSON 解析才保留单个反斜杠');
+      expect(text).not.toContain('括号保持原样未转义');
       // 白皙肤色词禁令只给 ComfyUI:本地模型默认肤色已够白,再叠 pale skin 会白得失真。
       expect(text).toContain('白皙词一律禁止');
       expect(text).toContain('白皙肤色词混进任何一张图');

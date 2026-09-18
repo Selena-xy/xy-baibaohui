@@ -38,8 +38,8 @@ import {
  * 与出图渠道**解耦**(见 settings.ts 的 PromptStyle 注释):'auto' 仍跟随 defaultBackend,
  * 与旧版逐字节一致;显式选了 comfyui / nai 就压过渠道。存在的理由是「NAI 协议 +
  * ComfyUI 系底模」这类兼容站——它把 char_captions 压平成单串再送进工作流,NAI 规范
- * 明令禁止的邻接绑定反而是那里唯一可用的多角色区分手法。身份 tag 的圆括号两边一致
- * 都不转义——实测给括号加转义会把整套官方设定硬套上去、压掉其余细节描写。
+ * 明令禁止的邻接绑定反而是那里唯一可用的多角色区分手法。身份 tag 的圆括号按 ComfyUI
+ * 口径转义（带反斜杠且全小写，避免未转义括号被 CLIP 当成权重语法拆散）。
  *
  * 返回 '' 表示该后端没有专属规范(webui 等),此时不占消息位。
  * ⚠ 规范与思维链必须成对取(两者共用本函数):思维链的槽位块要填的字段,得在同一份
@@ -249,7 +249,7 @@ export async function buildAutoTagMessages(
 
   const libraryReferenceRule = naiCharPromptsOn
     ? '- If a visible character exists in the fixed appearance library or is created in this changes array, copy the fixed fields into that character own characters[].tag; keep appearance wording verbatim but convert 1girl/1boy to girl/boy. The fandom identity tag (fields.fandom) goes first, verbatim. Do not put them in Base or assign them to another character. Library natural-language notes may inform that character nl. Use the library entry name verbatim for characters[].name and for any name inside tag/nl — never transliterate, translate, or vary it.'
-    : '- 画面中的角色只要已在【角色固定外貌库】，或在本次 changes 中建了档，tag 与 nl 就必须照抄库中/刚建档的字段值，用词一字不改，不得自行改写或增删其固定外貌——但**照抄不豁免多人绑定**：同框还有第二个人时，抄下来的字段值仍要按邻接绑定写法带上主人（库里是 large breasts、画面是 1boy 1girl，就写 large breasts on silver hair girl）。fandom 字段只作档案记录，ComfyUI 画图时不照抄它，同人身份 tag 按下发的 ComfyUI 规范现场判定（括号不加转义）。\n   - 同一角色的固定外貌在一张图里只写一遍：同一图内再次提到他时用简短指代（the boy、the silver-haired girl）承接，禁止把整串外貌重复第二遍——重复会让模型以为画面里有多个同样的人，把一个人画成互不相连的几块。';
+    : '- 画面中的角色只要已在【角色固定外貌库】，或在本次 changes 中建了档，tag 与 nl 就必须照抄库中/刚建档的字段值，用词一字不改，不得自行改写或增删其固定外貌——但**照抄不豁免多人绑定**：同框还有第二个人时，抄下来的字段值仍要按邻接绑定写法带上主人（库里是 large breasts、画面是 1boy 1girl，就写 large breasts on silver hair girl）。fandom 字段只作档案记录，ComfyUI 画图时不照抄它，同人身份 tag 按下发的 ComfyUI 规范现场判定（全小写且带转义反斜杠，如 shorekeeper \(wuthering waves\)）。\n   - 同一角色的固定外貌在一张图里只写一遍：同一图内再次提到他时用简短指代（the boy、the silver-haired girl）承接，禁止把整串外貌重复第二遍——重复会让模型以为画面里有多个同样的人，把一个人画成互不相连的几块。';
   const newCharacterNlRule = naiCharPromptsOn
     ? '\n   - NAI V5 profile requirement: every field:"new" change must include a non-empty nl containing a concise English natural-language description of the character fixed appearance. The name must be the character exact name from the card/lorebook/story — a Chinese name stays Chinese (小雪), never pinyin or translation. Fandom characters must also include their identity tag in fields.fandom, e.g. {"name":"冬海","field":"new","fields":{"sex":"1girl","hair":"long black hair","eyes":"blue eyes","fandom":"kasumi (blue archive)"},"nl":"A girl with long black hair and blue eyes.","position":"P2","reason":"first appearance"}; original characters omit fandom. If an existing library entry lacks fandom but the character is fandom, report a changes item with field:"fandom". Describe only fixed appearance: no current outfit, pose, or location — temporary states never enter the profile.'
     : '';
@@ -258,7 +258,7 @@ export async function buildAutoTagMessages(
    - **建档资格与入画资格是两回事**：不建档只表示他不进角色库，不表示他不能入画；已建档也不表示他必须入画。先按本图的主体和核心互动取景，再为镜头内的人写外貌，不按档案状态决定取舍。无名角色若是核心互动的参与者，照常入画，不得仅因缺档案放弃画面、改选瞬间或裁掉他；仅仅在场不构成入画理由，无关在场者可以留在镜头外。
    - “已建档”只能按【角色固定外貌库】区块中的同名条目判断：只有名字实际列在该区块中才算已建档；世界书、角色卡、柏宝书或正文里的详细设定只是建档依据，绝不等于已经在库。每个在场正式角色必须二选一：指出库中的同名条目，或在 changes 中输出 field:"new"。一次性无名角色不在这条二选一之内：他既不建档也不写 changes，不需要指出任何库条目，缺档案是正常状态而非遗漏。
    - 建档写法：{"name":"角色名","field":"new","fields":{"sex":"1girl","hair":"long black hair","eyes":"blue eyes"},"position":"P2","reason":"首次出场建档"}；position 填他首次出现的位置，仅作记录——建档在本楼全程有效，本楼任意位置的图片都可以立即使用这套外貌。
-   - 建档字段只放**长期不变的身体特征**：sex/hair/eyes/skin/body/extra 填性别、发色发型、瞳色、肤色、体型、标志特征；outfit 只填该角色**固定不换的招牌着装**；判定为同人角色的，fields 里必须写 fandom（模型可识别的英文 Danbooru 身份 tag，格式 character name (copyright name)），原创角色不写 fandom。
+   - 建档字段只放**长期不变的身体特征**：sex/hair/eyes/skin/body/extra 填性别、发色发型、瞳色、肤色、体型、标志特征；outfit 只填该角色**固定不换的招牌着装**；判定为同人角色的，fields 里必须写 fandom（模型可识别的英文 Danbooru 身份 tag，全小写且带转义反斜杠，格式 character name \(copyright name\)，如 shorekeeper \(wuthering waves\)），原创角色不写 fandom。
    - **字段值必须是 danbooru 画得出、模型认得的英文词**：身高体重等数字（178cm、50kg）、气质性格与身份评价（gentle handsome type、mature aura、professional cosplayer）一律不得写进任何字段——它们画不出来，只会占掉之后每张图的 tag 预算。
    - **临时状态一律不得写进任何字段**（档案会在他之后每一张图里被照抄）：动作、姿势、所在场景（lying on carpet、standing、sitting、unzipped、湿身、伤势等）；**临时发型**（盘发、扎发、披发、湿发等一次性造型——hair 只写长期成立的长度与发色，写 long silver hair，不要写 long silver hair in an elegant bun）；以及**当前这身衣服**（cosplay、制服、礼服等只在某段剧情里穿的服饰）。把姿势写进去会让他之后每张都保持那个姿势，把盘发写进去会让他之后每张都盘着头发，把 cosplay 写进 outfit 会让他之后每张都穿着那身。
    - outfit 只在角色确实有**跨剧情长期不换的招牌着装**时才填（如固定穿校服的学生）；角色本来就常换装、或当前服装只是临时穿着的，outfit 留空——留空比写错安全。

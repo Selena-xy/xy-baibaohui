@@ -80,6 +80,8 @@
 
 > 又一次观察项：nl 的总起句这轮 **14/14 张齐全**（上一轮 3/13），但收尾句 `blurred in the background` 仍只 1/14——画面没出问题，继续不动；`hair bun` 仍时有时无（9/14 张写了）。
 
+4. **同人身份 tag 转义格式与纯小写回归**：按用户实际出图需求，ComfyUI 下同人角色身份 tag 改回带斜杠转义格式 `shorekeeper \(wuthering waves\)`（未转义括号会被 ComfyUI CLIPTextEncode 当作权重语法拆散）。同时增加**全英文小写禁令**（词语内严禁大写字母）：实跑中模型把同人词写成了 `Shorekeeper (Wuthering Waves)` 包含多处大写，规范和思维链均明确严禁任何大写，一律写成纯小写。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：

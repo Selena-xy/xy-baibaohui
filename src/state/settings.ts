@@ -457,8 +457,8 @@ tag（JSON 的 tag 键）：danbooru 短 tag——**全英文小写（词语内�
 - 每个角色的硬特征（发色/瞳色/体型）并列写出，不要编号（girl1/girl2 模型不认识）。
 - 角色各自的颜色/服装/物件必须绑定到该角色的特征词上——模型靠相邻关系配对：写 "white dress on green hair girl, black dress on blue hair girl"，不要写成 "a white dress and a black dress" 这种无法分配的一堆。
 - 同类不同款的服装尤其要绑定，不能靠一个统称糊过去：两人都穿校服但男女版型不同时，写 "dark pleated skirt on green hair girl, black opaque pantyhose on green hair girl, white shirt on black hair boy, dark trousers on black hair boy"，绝不能只裸写一个 school uniform——那会让模型把裙子套到男生身上，或者干脆给两人各自随机设计一套。同理，pantyhose、blazer 这类只有一个人穿的部件也必须带上主人。
-- 多人共有的特征只写一次（如都是长发：一个 long hair 即可，不要每人复制一遍）。
-- 各自不同的动作/姿态也用同一个绑定手法写进 tag：写 "black hair girl waving, silver hair girl eating dango"，不要写成 "waving, eating dango" 这种无法分配的裸动作（模型会随机安到人头上）；多人共同参与的互动（holding hands、hug 等）直接写。
+- 多人共有的特征只写一次（如都是长发：一个 long hair 即可，不要每人复制一遍）：发色例外——它必须每人各写一条，它们是认人的锚点；瞳色相同就只写一个（两人都是 black eyes 就只写一个 black eyes，不要各写一遍），瞳色不同才各写。
+- 各自不同的动作/姿态也用同一个绑定手法写进 tag：写 "black hair girl waving, silver hair girl eating dango"，不要写成 "waving, eating dango" 这种无法分配的裸动作（模型会随机安到人头上）；多人共同参与的互动（holding hands、hug 等）直接写。同框时任何个人动作都不许裸写——擦嘴、递东西、翻纸这类生活小动作也算动作，一律以称谓前缀开头（black hair girl wiping mouth、black hair boy sliding paper），裸写的动作会被模型随机安到人头上。
 - 表情与视线同样是**每人各一份、必须绑定**的特征：写 "black hair girl smiling, silver hair girl looking at another"，不要把 smile、looking at another 裸写在串里——两人同框时裸写的表情/视线只会落到其中一人身上，另一人变成默认木脸。两人表情或视线恰好相同时也各写一份带称谓的，不适用「共有特征只写一次」。绑定一律用称谓前缀写法（<发色词> girl smile、<发色词> girl looking away）；表情与视线**不要用 on 形式**——视线词接上 on 会变成另一个意思（说「俯视某人」），归属反而反了。
 - 体型词（petite、tall、muscular 等）不是锚点，必须绑定到具体角色，不要裸写：写 "petite on silver hair girl"，不要让 petite 飘在串里——飘着的体型词会被模型摊到同框每个人身上。发色、瞳色本身是用来指认角色的锚点，照常裸列即可，不需要（也无法）自我绑定。体型只用短词逐个写（tall、curvy、long legs 各算一条），写成带 and / with 的长短语就不是 danbooru tag 了。
 - 男女同框（1boy 1girl）与两人同性是同一个标准：只要同框还有第二个人，凡「只有其中一人会有的东西」都要带上主人，与另一人穿什么无关——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型，男方的上衣裤子，全部逐件写成「<件> on <发色词>」（green hair girl 的 white dress、long skirt、high heels、large breasts、tall 都写成 on green hair girl）；从【角色固定外貌库】照抄来的字段值也照此办理，照抄不豁免绑定。只有发色与瞳色本身是指认锚点，照常裸列。裸写的裙袜、胸部与体型会被模型摊给同框的另一个人。锚点自己永远不带 on：发色与瞳色的短语照常裸列，不要给它们自己也接一个 on <发色词>；需要点名谁的妆容时单独写一条 <妆容> on <发色词>，别把 eyes 与妆容合成一条。
@@ -572,8 +572,8 @@ NAI 对 danbooru 体系理解最好：人物多的画面务必写清数量 tag�
 - 每个角色的硬特征（发色/瞳色/体型）并列写出，不要编号（girl1/girl2 模型不认识）。
 - 角色各自的颜色/服装/物件必须绑定到该角色的特征词上——模型靠相邻关系配对：写 "white dress on green hair girl, black dress on blue hair girl"，不要写成 "a white dress and a black dress" 这种无法分配的一堆。
 - 同类不同款的服装尤其要绑定，不能靠一个统称糊过去：两人都穿校服但男女版型不同时，写 "dark pleated skirt on green hair girl, black opaque pantyhose on green hair girl, white shirt on black hair boy, dark trousers on black hair boy"，绝不能只裸写一个 school uniform——那会让模型把裙子套到男生身上，或者干脆给两人各自随机设计一套。同理，pantyhose、blazer 这类只有一个人穿的部件也必须带上主人。
-- 多人共有的特征只写一次（如都是长发：一个 long hair 即可，不要每人复制一遍）。
-- 各自不同的动作/姿态也用同一个绑定手法写进 tag：写 "black hair girl waving, silver hair girl eating dango"，不要写成 "waving, eating dango" 这种无法分配的裸动作（模型会随机安到人头上）；多人共同参与的互动（holding hands、hug 等）直接写。
+- 多人共有的特征只写一次（如都是长发：一个 long hair 即可，不要每人复制一遍）：发色例外——它必须每人各写一条，它们是认人的锚点；瞳色相同就只写一个（两人都是 black eyes 就只写一个 black eyes，不要各写一遍），瞳色不同才各写。
+- 各自不同的动作/姿态也用同一个绑定手法写进 tag：写 "black hair girl waving, silver hair girl eating dango"，不要写成 "waving, eating dango" 这种无法分配的裸动作（模型会随机安到人头上）；多人共同参与的互动（holding hands、hug 等）直接写。同框时任何个人动作都不许裸写——擦嘴、递东西、翻纸这类生活小动作也算动作，一律以称谓前缀开头（black hair girl wiping mouth、black hair boy sliding paper），裸写的动作会被模型随机安到人头上。
 - 表情与视线同样是**每人各一份、必须绑定**的特征：写 "black hair girl smiling, silver hair girl looking at another"，不要把 smile、looking at another 裸写在串里——两人同框时裸写的表情/视线只会落到其中一人身上，另一人变成默认木脸。两人表情或视线恰好相同时也各写一份带称谓的，不适用「共有特征只写一次」。绑定一律用称谓前缀写法（<发色词> girl smile、<发色词> girl looking away）；表情与视线**不要用 on 形式**——视线词接上 on 会变成另一个意思（说「俯视某人」），归属反而反了。
 - 体型词（petite、tall、muscular 等）不是锚点，必须绑定到具体角色，不要裸写：写 "petite on silver hair girl"，不要让 petite 飘在串里——飘着的体型词会被模型摊到同框每个人身上。发色、瞳色本身是用来指认角色的锚点，照常裸列即可，不需要（也无法）自我绑定。体型只用短词逐个写（tall、curvy、long legs 各算一条），写成带 and / with 的长短语就不是 danbooru tag 了。
 - 男女同框（1boy 1girl）与两人同性是同一个标准：只要同框还有第二个人，凡「只有其中一人会有的东西」都要带上主人，与另一人穿什么无关——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型，男方的上衣裤子，全部逐件写成「<件> on <发色词>」（green hair girl 的 white dress、long skirt、high heels、large breasts、tall 都写成 on green hair girl）；从【角色固定外貌库】照抄来的字段值也照此办理，照抄不豁免绑定。只有发色与瞳色本身是指认锚点，照常裸列。裸写的裙袜、胸部与体型会被模型摊给同框的另一个人。锚点自己永远不带 on：发色与瞳色的短语照常裸列，不要给它们自己也接一个 on <发色词>；需要点名谁的妆容时单独写一条 <妆容> on <发色词>，别把 eyes 与妆容合成一条。
@@ -714,7 +714,7 @@ E. 选段
    - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光（画面里不出现脸的局部特写除外，那种图本就不该有表情词）；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里全是 danbooru 短词，全英文小写且词语内无大写字母，没有英文句子或所有格长短语；人数 tag 用的是 1boy 1girl / 2boys 1girl / 2girls 这类标准词，没有 2people、1man、2men、multiple people 这种自造总数（成年男性也写 boy），也没有把同一个数量词写两遍——人数与取景框里看得见的人数一致（没被虚化的第三者也算人）；tag 里也没有 portrait / landscape 这两个词——它们只写在 size 键，tag 的构图位必须是一个真正的景别词。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
    - 绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）；生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on——on 只出现在穿戴件、服饰部件与解剖部位后面；单人画面的视线里没有 looking at another；动作词没有和绑定部位粘成一条；锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色；同一件服装/饰品的措辞与上一张图一致，没有同义词改写，局部件没有把整件衣服挤掉。
-   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
+   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每条个人动作 tag 都以称谓前缀开头（词表互动词除外），没有裸写的个人动作；共有瞳色只写了一份；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
    - 没有 pale skin、white skin、fair skin 这类白皙肤色词混进任何一张图（角色库字段里有也跳过不抄）：默认肤色已经够白，写了会白得发灰失真；角色真是晒黑/深肤色时用的 tan、dark skin 不在此列。
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的 tag 串里都有 B 段定下的 character name \(copyright name\) 身份 tag（人数/构图之后、普通外貌之前，括号已加反斜杠转义且全小写无大写，如 shorekeeper \(wuthering waves\)），原创角色没有被误加作品名。
@@ -801,7 +801,7 @@ E. 选段
    - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光（画面里不出现脸的局部特写除外，那种图本就不该有表情词）；要求 nl 时与 tag 描述同一画面；人数 tag 用的是 1boy 1girl / 2boys 1girl / 2girls 这类标准词，没有 2people、1man、2men、multiple people 这种自造总数（成年男性也写 boy），也没有把同一个数量词写两遍——人数与取景框里看得见的人数一致（没被虚化的第三者也算人）。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
    - 绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）；生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on——on 只出现在穿戴件、服饰部件与解剖部位后面；单人画面的视线里没有 looking at another；动作词没有和绑定部位粘成一条；锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色；同一件服装/饰品的措辞与上一张图一致，没有同义词改写，局部件没有把整件衣服挤掉。
-   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
+   - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每条个人动作 tag 都以称谓前缀开头（词表互动词除外），没有裸写的个人动作；共有瞳色只写了一份；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的 tag 串里都有 B 段定下的 character name (copyright name) 身份 tag（人数/构图之后、普通外貌之前，不转义括号），原创角色没有被误加作品名。
    - 若本图是显式 NSFW 场景：实际可见的性器官、身体部位和接触关系都已用准确 tag 写明，没有只用 nsfw、nude、sex 这类泛化词一笔带过；非显式场景本项直接跳过。

@@ -664,7 +664,7 @@ describe('auto tag prompt', () => {
       // 覆盖块不压在它末尾就等于没写。按标记取,不依赖消息下标。
       const thinking = onMsgs.find(m => m.content.includes('【输出前思考清单】'))?.content ?? '';
       expect(thinking.length).toBeGreaterThan(0);
-      expect(thinking.trimEnd().endsWith('照常画脸。')).toBe(true);
+      expect(thinking.trimEnd().endsWith('发色锚点与可见服装齐全。')).toBe(true);
     } finally {
       settings.defaultBackend = oldBackend;
     }
@@ -783,6 +783,61 @@ describe('auto tag prompt', () => {
     } finally {
       settings.defaultBackend = oldBackend;
       settings.nai.model = oldModel;
+    }
+  });
+
+  it('locks the round-7 live-run fixes: faceless-male exclusivity, shared eye color once, prefixed personal actions', async () => {
+    const options: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      facelessMale: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const all = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+
+      // A) 同色瞳色只写一份:规范条 + 第三层自查(第六轮实跑 black eyes 每人一份,4/4 张)。
+      expect(all).toContain('发色例外——它必须每人各写一条，它们是认人的锚点');
+      expect(all).toContain('瞳色相同就只写一个（两人都是 black eyes 就只写一个 black eyes，不要各写一遍）');
+      expect(all).toContain('共有瞳色只写了一份');
+
+      // B) 同框时个人动作一律称谓前缀(第六轮实跑 wiping mouth with sleeve 裸写)。
+      expect(all).toContain('同框时任何个人动作都不许裸写——擦嘴、递东西、翻纸这类生活小动作也算动作');
+      expect(all).toContain('每条个人动作 tag 都以称谓前缀开头（词表互动词除外），没有裸写的个人动作');
+
+      // 两份中文单串规范同步。
+      settings.defaultBackend = 'nai';
+      settings.nai.model = 'nai-diffusion-4-full';
+      const naiText = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(naiText).toContain('瞳色相同就只写一个（两人都是 black eyes 就只写一个 black eyes，不要各写一遍）');
+      expect(naiText).toContain('同框时任何个人动作都不许裸写');
+      expect(naiText).toContain('共有瞳色只写了一份');
+
+      // C) 无面男:fm 裸写 + 与表情视线互斥 + 单人必填(第六轮实跑 faceless male on X 且男性带 smile)。
+      const on = (await buildAutoTagMessages(context(), 1, { ...options, facelessMale: true }, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(on).toContain('faceless male 一律裸写、不接 on');
+      expect(on).toContain('他与表情词、视线词互斥');
+      expect(on).toContain('他名下不许再出现任何表情词或视线词，两者同现即自相矛盾');
+      expect(on).toContain('表情与视线也照常必填，不因本条省略');
+      expect(on).toContain('落 tag 前最后核对：每个 faceless male 都裸写');
+      // 协议与思维链两侧都要有互斥条款,少一侧就会被另一侧压回。
+      expect(on).toContain('他名下没有任何表情词与视线词');
+    } finally {
+      settings.defaultBackend = oldBackend;
     }
   });
 

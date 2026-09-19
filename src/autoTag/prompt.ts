@@ -105,7 +105,7 @@ function backendThinkingPrompt(options: AutoTagSettings, naiCharPromptsOn: boole
   const faceless = options.facelessMale
     ? `
 
-【本楼额外规则·优先于以上所有条目】男性不露脸（用户已开启「无面男」）：与女性同框的男性角色一律不画脸（同框的都是男性时照常画脸——这条规则的目的就是把焦点让给女性）——不加表情与视线（上面「每个在场角色都必须有表情词和视线词」对这些男性不适用），改为落一个 faceless male，脸不进画面；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全；男女同框时只要人数 tag 里有 1boy，他在 tag 串里就必须始终有自己完整的一份——发色锚点、可见服装、faceless male 一个都不能少，不许只写个人数 tag 就把他丢在串外，他的解剖部位也照旧绑定到他身上（penis on black hair boy）。nl 里同样不描述他的面部。画面里没有女性时（男性单人出镜或男男同框）照常画脸。`
+【本楼额外规则·优先于以上所有条目】男性不露脸（用户已开启「无面男」）：与女性同框的男性角色一律不画脸（同框的都是男性时照常画脸——这条规则的目的就是把焦点让给女性）——不加表情与视线（上面「每个在场角色都必须有表情词和视线词」对这些男性不适用），改为落一个 faceless male，脸不进画面；faceless male 一律裸写、不接 on；他与表情词、视线词互斥——tag 里落了 faceless male 的男性名下不许再出现任何表情词或视线词，两者同现即自相矛盾；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全；男女同框时只要人数 tag 里有 1boy，他在 tag 串里就必须始终有自己完整的一份——发色锚点、可见服装、faceless male 一个都不能少，不许只写个人数 tag 就把他丢在串外，他的解剖部位也照旧绑定到他身上（penis on black hair boy）。nl 里同样不描述他的面部。画面里没有女性时（男性单人出镜或男男同框）照常画脸，表情与视线照常必填，不因本条省略；落 tag 前最后核对：每个 faceless male 都裸写、他名下没有任何表情词与视线词、发色锚点与可见服装齐全。`
     : '';
   return resolved + faceless;
 }
@@ -270,7 +270,7 @@ export async function buildAutoTagMessages(
   // (见 backendThinkingPrompt)——两处都要有,少一处就会被思维链的「人人要有表情」压回来。
   const facelessMaleRule = options.facelessMale
     ? `
-   - **男性不露脸（用户已开启「无面男」）**：画面里男性与女性同框时，男性一律不画脸——不写他的表情与视线，改为落一个 faceless male；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全；男女同框时只要人数 tag 里有 1boy，他在 tag 串里就必须始终有自己完整的一份（发色锚点、可见服装、faceless male），不得只留一个人数 tag 就让他整条消失在串外，他的解剖部位也照旧绑定到他身上（penis on black hair boy）。该画面的 nl 同样不描述他的面部。画面里没有女性时（男性单人出镜或男男同框）照常画脸——「无面男」的目的就是把视觉焦点让给女性，男男同框不适用。`
+   - **男性不露脸（用户已开启「无面男」）**：画面里男性与女性同框时，男性一律不画脸——不写他的表情与视线，改为落一个 faceless male；faceless male 一律裸写、不接 on；他与表情词、视线词互斥——tag 里落了 faceless male 的男性，他名下不许再出现任何表情词或视线词，两者同现即自相矛盾；他的身份 tag、发色瞳色、服装、体型、动作与接触点照常写全；男女同框时只要人数 tag 里有 1boy，他在 tag 串里就必须始终有自己完整的一份（发色锚点、可见服装、faceless male），不得只留一个人数 tag 就让他整条消失在串外，他的解剖部位也照旧绑定到他身上（penis on black hair boy）。该画面的 nl 同样不描述他的面部。画面里没有女性时（男性单人出镜或男男同框）照常画脸，表情与视线也照常必填，不因本条省略——「无面男」的目的就是把视觉焦点让给女性，男男同框不适用。`
     : '';
   const multiCharacterBindingRule = naiCharPromptsOn
     ? '- 多人画面中，每个角色的发色、瞳色、体型、服装、物件和个人动作都必须放进各自的 characters[].tag，禁止放进 Base 或分配给其他角色。'

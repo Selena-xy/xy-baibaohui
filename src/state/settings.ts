@@ -435,9 +435,10 @@ tag（JSON 的 tag 键）：danbooru 短 tag——**全英文小写（词语内�
 核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's ass、hand on another's inner thigh、hand on another's thigh、touching crotch、hand up skirt、fingering、panties aside、spread legs、penetration、standing sex、tearing pantyhose、torn pantyhose、hug from behind、carrying、holding strap、kabedon、leaning back、leaning against another、orgasm。
 上面这些词一律**原样照抄**：带 another 的词里 another 是固定写法，不许替换成 girl's、boy's 或任何发色称谓，也不许在它前后另加主语。互动类动作（hand on another's…、groping、hug from behind、fingering、penetration）本身就说明了谁对谁，**不需要再加主人**；只有单人动作（waving、eating dango 这类）才按上面的邻接绑定写法带上发色称谓。
 **词表里没有的动作一律不许自己拼英文短语**：手部接触回落到 hand on another's waist / hip / ass / thigh / inner thigh / shoulder / arm / head / chest 这一族，抱、抬、贴靠回落到 carrying / hug from behind / leaning against another，仍然落不下就只写 groping / fingering / penetration 这类通用词，把接触点的细节全部交给 nl——宁可少一个 tag，也不许自造模型没见过的词组。同一场互动只写一个主词，最多再补一个方向或部位词；把同义动作堆成三四条只会稀释权重。
+与物品、环境的互动（递接东西、写字签字、扫码出示、掀帘进门、操作机器等）不属于人际互动词表：写成「通用动词 + 物品」的短 tag——动词从 holding、carrying、writing、typing、pointing、lifting、entering 这类 danbooru 认得的短词里取，物品单独一条（holding pen、holding smartphone、entering store）；不许把称谓、another 或 on 拼进物品动作，递给谁、接自谁这类方向细节交给 nl。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组（例外：画面里根本不出现脸的局部特写——只拍手、腿、脚、道具——允许省略表情与视线，不得为了凑齐槽位硬写一个表情，那会让模型给没脸的地方硬塞一张脸）：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
-- 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
+- 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。looking at another 只在画面里确有另一人时使用——单人画面（1girl / 1boy / no humans）里没有「另一个人」，视线只能从其余的 looking at viewer / looking away / looking down / looking up / looking back / closed eyes 里选。
 - 表情与视线一律从上面列表里**原样取用一个词**：不得加形容词修饰、不得拼接、不得自造词组——模型只认列表里的标准词，多写的修饰只会浪费 token 并稀释其余 tag。带形容词的自然语言感受留给 nl，tag 只放标准词。并从列表里**连词形一起照抄**：列表给 frown 就写 frown。
 - 正文没写表情不是不写的理由——推断一个；判断为面无表情时也要显式写 expressionless。
 
@@ -450,7 +451,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——**全英文小写（词语内�
 - **写进档案的 fandom 与落进画面 tag 的是同一个形态**（都带转义反斜杠且全小写）：库里存的和落进画面 tag 的保持一致，之后任何一次照抄都不会丢转义，同人角色的还原才稳定。
 
 多人画面（两人及以上）额外规则：
-- 人数 tag 必须明确（1girl、1boy、1boy 1girl、2girls、2boys、2boys 1girl、1boy 2girls、2boys 2girls、multiple boys、multiple girls）；缺了模型会漏画或多画。人数 tag 只能用 danbooru 标准词，一律不要写 2people、3people 这类自造总数——danbooru 没有这个词，模型不认，只会白白占 token。
+- 人数 tag 必须明确（1girl、1boy、1boy 1girl、2girls、2boys、2boys 1girl、1boy 2girls、2boys 2girls、multiple boys、multiple girls）；缺了模型会漏画或多画。人数 tag 只能用 danbooru 标准词，一律不要写 2people、3people 这类自造总数——danbooru 没有这个词，模型不认，只会白白占 token。danbooru 也没有 1man、2men、1woman 这类词——成年男性同样写 boy（中年大叔与少年同框写 2boys），成年女性同样写 girl；人数之外也不许再叠 multiple people 这类总数词，覆盖所有人的数量 tag 本身就是总数。
 - **人数 tag 要覆盖画面里所有可见人物，且每个数量词只写一次**：除了主角，站在画面里、没有被虚化成一片的第三者（店员、路人、外卖骑手）也要算进去——三人同框写 2boys 1girl 或 1boy 2girls，两人以上同性写 multiple boys / multiple girls。把同一个数量词写两遍是两头都错：既没说清第三个人，又给模型一个自相矛盾的信号。只有背景里模糊成一片、看不出个体的人群才不计数。
 - 构图词（medium shot、full body 等，只写一个）紧跟人数 tag 写在前面，把画面主体锁在角色身上。
 - 每个角色的硬特征（发色/瞳色/体型）并列写出，不要编号（girl1/girl2 模型不认识）。
@@ -466,6 +467,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——**全英文小写（词语内�
   · 生理效果词（sweat、tears、drooling、blush、wet、messy hair 等）——它们不会把两个人的特征搞混，接上 on 只会变成模型没见过的词组；
   · 状态与接触类动作词（panties aside、hand up skirt、touching crotch、spread legs、penetration、orgasm、groping、fingering、hug from behind、carrying、leaning against another、holding hands、holding arm、kissing、biting、sitting on another's lap）——它们本身已经说明了谁对谁，一律不许再给它们接 on <发色词>：接上会被读成「这个人身上长出来的东西」，panties aside 这类词接给男方会被画成男方穿着内裤。
   · 单人画面里的解剖词（penis、breasts、pussy 等）——没有第二个人可以混淆，照常裸写。
+- **on 的适用范围就此封口**：它只能接在「会认错人」的穿戴件、服饰部件、携带物与需要归属的解剖部位后面——发色与瞳色（锚点自身）、表情、视线、生理效果词、状态与接触类动作词，以及单人画面里的一切词，永远不出现在 on 后面。
 - **动作词与部位不得拼成一条**：把动作词和绑定部位粘在一起（groping 与 breasts on <发色词> 粘成一条）不是 danbooru 词，模型没见过；拆成两条写——动作裸写、部位照绑定写法单列。
 - **锚点只能是正文/设定给出的发色或瞳色**：不得从服装、道具的颜色推出发色（写了 yellow jacket 不等于 yellow hair），也不得给没有设定的配角编一个发色来当锚点。配角没有明确发色时，用身份词（man、boy、passerby）或直接裸写他独有的可见特征（yellow jacket、helmet）——配角独有的特征不会认错人，本来就不需要绑定。
 - **同一件服装/饰品的措辞整楼逐字复用**：同一样东西定下哪种说法，整楼就都用哪种——裤袜不许在 stockings / pantyhose / thighhighs 之间来回换（pantyhose 是连裤、thigh high stockings 是过膝袜，正文写的是哪种就写哪种），颈饰不许在 choker / collar / neck ribbon 之间来回换。同义词改写等于换了件衣服，模型每张图都会重画一次。局部件是补充不是替代：正文提到胸衣时，整件裙装的视觉指纹照旧要写，不能只留一个 corset 把裙子省掉。
@@ -553,9 +555,10 @@ tag（JSON 的 tag 键）：danbooru 短 tag——**全英文小写（词语内�
 核心动作**本身也只能用 danbooru 短 tag**，不许把动作写成一句英文描述塞进 tag——中文点明接触点只是帮你把动作想清楚，想清楚之后只用模型认得的短词表达，句子一律留给 nl。这类动作的常用词：groping、hand on another's waist、hand on another's ass、hand on another's inner thigh、hand on another's thigh、touching crotch、hand up skirt、fingering、panties aside、spread legs、penetration、standing sex、tearing pantyhose、torn pantyhose、hug from behind、carrying、holding strap、kabedon、leaning back、leaning against another、orgasm。
 上面这些词一律**原样照抄**：带 another 的词里 another 是固定写法，不许替换成 girl's、boy's 或任何发色称谓，也不许在它前后另加主语。互动类动作（hand on another's…、groping、hug from behind、fingering、penetration）本身就说明了谁对谁，**不需要再加主人**；只有单人动作（waving、eating dango 这类）才按上面的邻接绑定写法带上发色称谓。
 **词表里没有的动作一律不许自己拼英文短语**：手部接触回落到 hand on another's waist / hip / ass / thigh / inner thigh / shoulder / arm / head / chest 这一族，抱、抬、贴靠回落到 carrying / hug from behind / leaning against another，仍然落不下就只写 groping / fingering / penetration 这类通用词，把接触点的细节全部交给 nl——宁可少一个 tag，也不许自造模型没见过的词组。同一场互动只写一个主词，最多再补一个方向或部位词；把同义动作堆成三四条只会稀释权重。
+与物品、环境的互动（递接东西、写字签字、扫码出示、掀帘进门、操作机器等）不属于人际互动词表：写成「通用动词 + 物品」的短 tag——动词从 holding、carrying、writing、typing、pointing、lifting、entering 这类 danbooru 认得的短词里取，物品单独一条（holding pen、holding smartphone、entering store）；不许把称谓、another 或 on 拼进物品动作，递给谁、接自谁这类方向细节交给 nl。
 表情与视线每张图都要写，不得省略，且必须使用模型认识的标准 danbooru 词，不得自创描述性词组（例外：画面里根本不出现脸的局部特写——只拍手、腿、脚、道具——允许省略表情与视线，不得为了凑齐槽位硬写一个表情，那会让模型给没脸的地方硬塞一张脸）：
 - 表情从这类实际存在的 tag 里选（可叠加 1~2 个）：smile、grin、laughing、blush、embarrassed、frown、pout、puffy cheeks、surprised、crying、tears、angry、serious、sad、worried、scared、smug、seductive smile、expressionless、half-closed eyes、open mouth、clenched teeth、winking、glaring、staring、tongue out、biting lip、drooling、sweat drop。
-- 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。
+- 视线选一个：looking at viewer、looking at another、looking away、looking down、looking up、looking back、closed eyes 之外不要另造。looking at another 只在画面里确有另一人时使用——单人画面（1girl / 1boy / no humans）里没有「另一个人」，视线只能从其余的 looking at viewer / looking away / looking down / looking up / looking back / closed eyes 里选。
 - 表情与视线一律从上面列表里**原样取用一个词**：不得加形容词修饰、不得拼接、不得自造词组——模型只认列表里的标准词，多写的修饰只会浪费 token 并稀释其余 tag。带形容词的自然语言感受留给 nl，tag 只放标准词。并从列表里**连词形一起照抄**：列表给 frown 就写 frown。
 - 正文没写表情不是不写的理由——推断一个；判断为面无表情时也要显式写 expressionless。
 同人角色身份 tag：若角色明确来自已有动漫、游戏、小说等作品，必须在人数/构图之后、普通外貌之前写模型可识别的英文 Danbooru 身份 tag，格式为 character name (copyright name)。角色名与作品名使用其通行英文 tag，不转义圆括号，不得直译中文、缩写作品名或只写角色名。原创角色不写；无法可靠确定作品时不得猜测，按原创角色处理。
@@ -563,7 +566,7 @@ tag（JSON 的 tag 键）：danbooru 短 tag——**全英文小写（词语内�
 NAI 对 danbooru 体系理解最好：人物多的画面务必写清数量 tag（1girl、2boys 等）；需要特定画风时可加艺术家/风格 tag。
 
 多人画面（两人及以上）额外规则：
-- 人数 tag 必须明确（1girl、1boy、1boy 1girl、2girls、2boys、2boys 1girl、1boy 2girls、2boys 2girls、multiple boys、multiple girls）；缺了模型会漏画或多画。人数 tag 只能用 danbooru 标准词，一律不要写 2people、3people 这类自造总数——danbooru 没有这个词，模型不认，只会白白占 token。
+- 人数 tag 必须明确（1girl、1boy、1boy 1girl、2girls、2boys、2boys 1girl、1boy 2girls、2boys 2girls、multiple boys、multiple girls）；缺了模型会漏画或多画。人数 tag 只能用 danbooru 标准词，一律不要写 2people、3people 这类自造总数——danbooru 没有这个词，模型不认，只会白白占 token。danbooru 也没有 1man、2men、1woman 这类词——成年男性同样写 boy（中年大叔与少年同框写 2boys），成年女性同样写 girl；人数之外也不许再叠 multiple people 这类总数词，覆盖所有人的数量 tag 本身就是总数。
 - **人数 tag 要覆盖画面里所有可见人物，且每个数量词只写一次**：除了主角，站在画面里、没有被虚化成一片的第三者（店员、路人、外卖骑手）也要算进去——三人同框写 2boys 1girl 或 1boy 2girls，两人以上同性写 multiple boys / multiple girls。把同一个数量词写两遍是两头都错：既没说清第三个人，又给模型一个自相矛盾的信号。只有背景里模糊成一片、看不出个体的人群才不计数。
 - 构图词（medium shot、full body 等，只写一个）紧跟人数 tag 写在前面，把画面主体锁在角色身上。
 - 每个角色的硬特征（发色/瞳色/体型）并列写出，不要编号（girl1/girl2 模型不认识）。
@@ -579,6 +582,7 @@ NAI 对 danbooru 体系理解最好：人物多的画面务必写清数量 tag�
   · 生理效果词（sweat、tears、drooling、blush、wet、messy hair 等）——它们不会把两个人的特征搞混，接上 on 只会变成模型没见过的词组；
   · 状态与接触类动作词（panties aside、hand up skirt、touching crotch、spread legs、penetration、orgasm、groping、fingering、hug from behind、carrying、leaning against another、holding hands、holding arm、kissing、biting、sitting on another's lap）——它们本身已经说明了谁对谁，一律不许再给它们接 on <发色词>：接上会被读成「这个人身上长出来的东西」，panties aside 这类词接给男方会被画成男方穿着内裤。
   · 单人画面里的解剖词（penis、breasts、pussy 等）——没有第二个人可以混淆，照常裸写。
+- **on 的适用范围就此封口**：它只能接在「会认错人」的穿戴件、服饰部件、携带物与需要归属的解剖部位后面——发色与瞳色（锚点自身）、表情、视线、生理效果词、状态与接触类动作词，以及单人画面里的一切词，永远不出现在 on 后面。
 - **动作词与部位不得拼成一条**：把动作词和绑定部位粘在一起（groping 与 breasts on <发色词> 粘成一条）不是 danbooru 词，模型没见过；拆成两条写——动作裸写、部位照绑定写法单列。
 - **锚点只能是正文/设定给出的发色或瞳色**：不得从服装、道具的颜色推出发色（写了 yellow jacket 不等于 yellow hair），也不得给没有设定的配角编一个发色来当锚点。配角没有明确发色时，用身份词（man、boy、passerby）或直接裸写他独有的可见特征（yellow jacket、helmet）——配角独有的特征不会认错人，本来就不需要绑定。
 - **同一件服装/饰品的措辞整楼逐字复用**：同一样东西定下哪种说法，整楼就都用哪种——裤袜不许在 stockings / pantyhose / thighhighs 之间来回换（pantyhose 是连裤、thigh high stockings 是过膝袜，正文写的是哪种就写哪种），颈饰不许在 choker / collar / neck ribbon 之间来回换。同义词改写等于换了件衣服，模型每张图都会重画一次。局部件是补充不是替代：正文提到胸衣时，整件裙装的视觉指纹照旧要写，不能只留一个 corset 把裙子省掉。
@@ -657,10 +661,11 @@ B. 角色清点与建档（具体建档字段与写法见任务协议，这里�
      · 【已建档】命中【角色固定外貌库】中的同名条目——只有名字实际列在该区块中才算已建档，世界书、角色卡、柏宝书或正文里的详细设定只是建档来源，不代表已经在库，不得凭印象宣称已在库；
      · 【本次建档】库里没有、但属于正式角色（有设定或持续参与剧情），首次出场就建档，不论他是否入选本次图片，本次输出 field:"new"；
      · 【一次性】正文只给了指称、没有设定、不持续参与剧情的一次性角色（店主、三年级队长）——不建档、不写 changes、不进库；入选画面时照常入画，把他当普通角色写进 tag 串，外貌按世界观一次补全，由正文指称 + 邻接绑定承担归属，绝不给他编造人名。
+   - field:"new" 只发给库里确实没有的角色：输出前先在【角色固定外貌库】区块里逐字搜一遍名字——同名条目已经存在，这一行就是【已建档】，照抄库中字段，绝不再输出 field:"new"（重复建档会被插件丢弃，但凭印象重写的外貌已经落进画面，瞳色发色从此漂移；觉得库字段与正文不符时以库为准，差异按临时状态处理，不改档案）。
    - 同一行里顺带判定原创还是同人：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，全英文小写且带转义反斜杠，形态为 character name \(copyright name\)（如 shorekeeper \(wuthering waves\)）；词语内严禁大写字母；输出 JSON 时写成 "character name \\(copyright name\\)"，双反斜杠经 JSON 解析才保留单个反斜杠。写进档案 changes 的 fields.fandom 用同一个转义形态——存档时绝不把反斜杠去掉，它和画面 tag 要发出去的是同一个样子。
-   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发这类造型是临时状态，不算长期发型），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
+   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发、丸子头、编发、马尾这类造型是临时状态，不算长期发型，永远不进 hair——画图时按当张正文补），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
    - 对照角色库检查永久变化：染发、剪发、永久变身等写入 changes 并标出生效 P编号；假发、美瞳、湿发、光照变色等临时状态不写。即使 images 为空也不能跳过这一步。
-   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
+   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发、丸子头、编发、马尾）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
 
 C. 服装时间线（每个在场角色一行：从 P 几起穿的是什么）
    - 按正文 P 位置维护每个角色的临时服装：正文未明确初始穿着时合理决定一次；没有穿脱、换装、衣物损坏或场景/时间跳跃就沿用上一状态，明确变化后从对应 P 位置起更新。
@@ -681,8 +686,8 @@ E. 选段
 每张图各写一块，把下面每个槽位都写出取值。行文形态随你，但七个槽位一个都不能少——漏掉任何一个都会让最终 tag 缺一块。
 
 ■ P<编号>
-  人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，同一个数量词也不许写两遍；必须覆盖本图取景框内所有可见人物（含没被虚化的第三者：店员、路人、外卖骑手）；+ 在场角色名；无人物画面写 no humans>
-  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）；词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's；同一场互动只写一个主词>
+  人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，也不要 1man、2men、multiple people 这类 danbooru 没有的词（成年男性也写 boy，中年大叔与少年同框写 2boys；覆盖所有人的数量 tag 本身就是总数），同一个数量词也不许写两遍；必须覆盖本图取景框内所有可见人物（含没被虚化的第三者：店员、路人、外卖骑手）；+ 在场角色名；无人物画面写 no humans>
+  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）；词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's；同一场互动只写一个主词；物品与环境的互动写成「通用动词 + 物品」短 tag（holding pen、writing、holding smartphone），不拼称谓、another 或 on>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳上面的接触点>
   角色行（每个在场角色各一行）：<角色名>｜表情｜视线｜本镜头可见服装｜临时状态｜个人动作
   场景：<地点 + 画面里实际可见的关键道具>
@@ -694,10 +699,10 @@ E. 选段
    - 具体禁止这三种写法：带问号的自问（「landscape？」「用 blush？」）、并列候选（「expressionless 或 slight smile」）、写完再推翻（「用 A……不过 B 更好，改 A 为 B」）。心里比较完直接写结论，把比较过程留在心里。证据不足时按兜底口径直接定（size 拿不准写 portrait，服装细节不明就选一套常见且自洽的），定了就往下走。
    - 也不要在槽位里附上选择理由或对 danbooru 词表的检索过程（「looking ahead 不在标准列表」这类）——规范给了什么词，直接从里面挑一个填上。
    - 单一瞬间：一块只能是一次快门完整拍下的画面，不要把先后发生的多个动作、多个时间点或因果过程塞进同一块；剧情事实严格按正文，不编造人物、动作或人数。
-   - 表情与视线填后端规范给出的标准 danbooru 词，不写中文感受也不自创词组（想写「温柔地笑」就填 smile）；只能从规范列出的词里挑，规范没列的词一律不许用，拿不准就填 expressionless / looking at another。两项都不得留空，面无表情也要主动填 expressionless。多人画面每人各填一份，落 tag 时各自绑定，不得合并或裸写——裸写的表情只会落到一个人身上，另一人变成默认木脸。画面里根本不出现脸的局部特写（只拍手、腿、脚、道具）写 "-" 即可，不要为了凑齐槽位硬填一个表情。
+   - 表情与视线填后端规范给出的标准 danbooru 词，不写中文感受也不自创词组（想写「温柔地笑」就填 smile）；只能从规范列出的词里挑，规范没列的词一律不许用，拿不准就填 expressionless / looking at viewer（单人画面的视线不许填 looking at another——画面里没有「另一个人」）。两项都不得留空，面无表情也要主动填 expressionless。多人画面每人各填一份，落 tag 时各自绑定，不得合并或裸写——裸写的表情只会落到一个人身上，另一人变成默认木脸。画面里根本不出现脸的局部特写（只拍手、腿、脚、道具）写 "-" 即可，不要为了凑齐槽位硬填一个表情。
    - 角色行是每个在场角色各一行，配角也要写全，不许只给主角写完整一行、配角用一句中文动作带过。【一次性】角色入画时同样占一行：外貌按世界观补全一次并落到 tag 串，同一楼里他若出现在两张图，两张用同一套外貌。每一行的表情与视线都必须各是一个独立的英文 danbooru 词：写成「看向另一侧、弯腰换鞋」这种中文短语等于这一行没有表情词，落 tag 时这个角色就会没有表情，被模型画成木脸。锚点只能是正文/设定给出的发色或瞳色：不得从服装、道具的颜色推出发色（写了 yellow jacket 不等于 yellow hair），也不得给没有设定的配角编一个发色当锚点——他没有明确发色就用身份词（man、boy、passerby）或直接裸写他独有的可见特征（yellow jacket、helmet）。
    - 绑定只用在两人及以上同框的画面：单人画面（1girl / 1boy）里所有特征裸写，只有一个主体就没有归属歧义，自我绑定只会白占 token。
-   - 三类词永远不绑定、裸写即可：①生理效果词（sweat、tears、drooling、blush、wet、messy hair）；②状态与接触类动作词（panties aside、hand up skirt、touching crotch、spread legs、penetration、orgasm、groping、fingering、hug from behind、carrying、leaning against another、holding hands、holding arm、kissing、biting、sitting on another's lap）——它们已经说明了谁对谁，接上 on <发色词> 会被读成「这个人身上长出来的东西」；③单人画面里的解剖词（penis、breasts、pussy）。
+   - 三类词永远不绑定、裸写即可：①生理效果词（sweat、tears、drooling、blush、wet、messy hair）；②状态与接触类动作词（panties aside、hand up skirt、touching crotch、spread legs、penetration、orgasm、groping、fingering、hug from behind、carrying、leaning against another、holding hands、holding arm、kissing、biting、sitting on another's lap）——它们已经说明了谁对谁，接上 on <发色词> 会被读成「这个人身上长出来的东西」；③单人画面里的解剖词（penis、breasts、pussy）。on 的适用范围就此封口：它只能接在穿戴件、服饰部件、携带物与解剖部位后面——发色瞳色、表情、视线、效果词后面一律不接。
    - 动作词与部位不许粘成一条：groping 与 breasts on <发色词> 要拆成两条写（动作裸写、部位按绑定写法单列），粘在一起不是 danbooru 词。
    - 可见服装照 C 中该角色当前状态的视觉指纹逐件写全，只写本景别看得见的部件；镜头外不可见的部件可以省略，但省略不等于脱掉，后续重新可见且中间没有变化时必须恢复。槽位里不许退回 school uniform、dress、pantyhose 这种笼统孤立词——C 段定的是 navy school blazer 就写 navy school blazer，写笼统词等于让模型自己重新设计这套衣服，同一角色每张图都会换个款式。同一件服装/饰品的措辞整楼逐字复用：定下哪种说法就都用哪种，不许一张写 thigh high stockings、一张写 pantyhose（连裤与过膝袜不是一件东西，正文写的是哪种就写哪种），也不许在 choker / collar / neck ribbon 之间来回换——同义词改写等于换了件衣服。局部件是补充不是替代：正文提到胸衣时，整件裙装的视觉指纹照旧写全，不能只留一个 corset 把裙子省掉。多人画面每人的服装各写各的，落 tag 时各自绑定：两人都穿校服但男女版型不同，裸写一个 school uniform 会让模型把裙子套到男生身上。
    - 若正文明确为显式 NSFW 场景：每个本图可见且动作相关的解剖部位写进该角色自己的 tag（同样邻接绑定到发色称谓），多人共担的性行为与整体接触写进核心互动；不得只用 nsfw、nude、sex 泛化词代替关键解剖信息，被完全遮住或画面外的部位不得写成可见。
@@ -706,16 +711,16 @@ E. 选段
 第三层｜落笔前自查（只核对，不预写答案）
 
 这一层只逐张核对下面几条，每点写一句结论即可。<thinking> 里禁止出现任何最终答案的草稿——不写完整 tag 串、不写完整 nl 句、更不要写出 JSON 对象或 "JSON:" 之类的标题。答案只在 </thinking> 之后出现一次，在思考里先写一遍等于把整份输出付两遍钱。核对完直接闭合 </thinking> 并输出 JSON：
-   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光（画面里不出现脸的局部特写除外，那种图本就不该有表情词）；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里全是 danbooru 短词，全英文小写且词语内无大写字母，没有英文句子或所有格长短语；人数 tag 用的是 1boy 1girl / 2boys 1girl / 2girls 这类标准词，没有 2people 这种自造总数，也没有把同一个数量词写两遍——人数与取景框里看得见的人数一致（没被虚化的第三者也算人）；tag 里也没有 portrait / landscape 这两个词——它们只写在 size 键，tag 的构图位必须是一个真正的景别词。
+   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光（画面里不出现脸的局部特写除外，那种图本就不该有表情词）；要求 nl 时与 tag 描述同一画面，且 tag 已精简到 30 个以内——细节留在 nl，没有把 nl 该写的东西堆进 tag；tag 里全是 danbooru 短词，全英文小写且词语内无大写字母，没有英文句子或所有格长短语；人数 tag 用的是 1boy 1girl / 2boys 1girl / 2girls 这类标准词，没有 2people、1man、2men、multiple people 这种自造总数（成年男性也写 boy），也没有把同一个数量词写两遍——人数与取景框里看得见的人数一致（没被虚化的第三者也算人）；tag 里也没有 portrait / landscape 这两个词——它们只写在 size 键，tag 的构图位必须是一个真正的景别词。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
-   - 绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）；生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on；动作词没有和绑定部位粘成一条；锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色；同一件服装/饰品的措辞与上一张图一致，没有同义词改写，局部件没有把整件衣服挤掉。
+   - 绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）；生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on——on 只出现在穿戴件、服饰部件与解剖部位后面；单人画面的视线里没有 looking at another；动作词没有和绑定部位粘成一条；锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色；同一件服装/饰品的措辞与上一张图一致，没有同义词改写，局部件没有把整件衣服挤掉。
    - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
    - 没有 pale skin、white skin、fair skin 这类白皙肤色词混进任何一张图（角色库字段里有也跳过不抄）：默认肤色已经够白，写了会白得发灰失真；角色真是晒黑/深肤色时用的 tan、dark skin 不在此列。
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的 tag 串里都有 B 段定下的 character name \(copyright name\) 身份 tag（人数/构图之后、普通外貌之前，括号已加反斜杠转义且全小写无大写，如 shorekeeper \(wuthering waves\)），原创角色没有被误加作品名。
    - 若本图协议含 negative 键：negative 已逐词对照本图的 tag 与 nl，凡是能在其中找到对应内容的词都已删掉，没有抵消正文已成立的事实；拿不准的已留空。协议不含 negative 键时本项直接跳过。
    - 若本图是显式 NSFW 场景：可见解剖部位都已绑定到所属角色，没有只写泛化 NSFW 词；非显式场景本项直接跳过。
-   - 每个在场正式角色都能二选一：指出【角色固定外貌库】中的同名条目，或在 changes 中有 field:"new"；【一次性】角色不在这条二选一之内——他不建档不写 changes，入画时外貌已在 tag 串里。世界书里有详细设定不能代替建档。每条 field:"new" 建档的 hair 都同时带发色和长度/发型、eyes 都带瞳色。永久变化的 P编号合法，临时状态没被误写进 changes。
+   - 每个在场正式角色都能二选一：指出【角色固定外貌库】中的同名条目，或在 changes 中有 field:"new"；【一次性】角色不在这条二选一之内——他不建档不写 changes，入画时外貌已在 tag 串里。世界书里有详细设定不能代替建档。同一角色没有输出第二条 field:"new"。每条 field:"new" 建档的 hair 都同时带发色和长度（不含造型）、eyes 都带瞳色。永久变化的 P编号合法，临时状态没被误写进 changes。
    - 张数在设定范围内；仅当下限为 0 且确实无可画时 images 才为空，且无论如何都保留应有的建档与 changes。`;
 
 /**
@@ -743,10 +748,11 @@ A. 事实与状态账本
 B. 角色清点与建档（具体建档字段与写法见任务协议，这里只做清点判断）
    - 通读目标正文，逐个列出实际在场且有名有姓的角色。不能只看最终入选图片里的人，也不能漏掉世界书、角色卡或柏宝书为其给出了设定的角色。
    - 每人写一行结论：命中的同名库条目，或本次 field:"new"。只有名字实际列在【角色固定外貌库】区块中的才算已建档——世界书、角色卡、柏宝书或正文里的详细设定只是建档来源，不代表已经在库，不得凭印象宣称已在库。库里没有、但属于正式角色（有设定或持续参与剧情）的，首次出场就建档，不论他是否入选本次图片；一次性无名路人不建。
+   - field:"new" 只发给库里确实没有的角色：输出前先在【角色固定外貌库】区块里逐字搜一遍名字——同名条目已经存在，这一行就是【已建档】，照抄库中字段，绝不再输出 field:"new"（重复建档会被插件丢弃，但凭印象重写的外貌已经落进画面，瞳色发色从此漂移；觉得库字段与正文不符时以库为准，差异按临时状态处理，不改档案）。
    - 同一行里顺带判定原创还是同人：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，格式 character name (copyright name)，不转义圆括号，写在人数/构图之后、普通外貌之前。
-   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发这类造型是临时状态，不算长期发型），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
+   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发、丸子头、编发、马尾这类造型是临时状态，不算长期发型，永远不进 hair——画图时按当张正文补），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。
    - 对照角色库检查永久变化：染发、剪发、永久变身等写入 changes 并标出生效 P编号；假发、美瞳、湿发、光照变色等临时状态不写。即使 images 为空也不能跳过这一步。
-   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
+   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发、丸子头、编发、马尾）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
 
 C. 服装时间线（每个在场角色一行：从 P 几起穿的是什么）
    - 按正文 P 位置维护每个角色的临时服装：正文未明确初始穿着时合理决定一次；没有穿脱、换装、衣物损坏或场景/时间跳跃就沿用上一状态，明确变化后从对应 P 位置起更新。
@@ -767,8 +773,8 @@ E. 选段
 每张图各写一块，把下面每个槽位都写出取值。行文形态随你，但七个槽位一个都不能少——漏掉任何一个都会让最终 tag 缺一块。
 
 ■ P<编号>
-  人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，同一个数量词也不许写两遍；必须覆盖本图取景框内所有可见人物（含没被虚化的第三者：店员、路人、外卖骑手）；+ 在场角色名；无人物画面写 no humans>
-  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）；词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's；同一场互动只写一个主词>
+  人物：<人数 tag 只能用 danbooru 标准词（1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，也不要 1man、2men、multiple people 这类 danbooru 没有的词（成年男性也写 boy，中年大叔与少年同框写 2boys；覆盖所有人的数量 tag 本身就是总数），同一个数量词也不许写两遍；必须覆盖本图取景框内所有可见人物（含没被虚化的第三者：店员、路人、外卖骑手）；+ 在场角色名；无人物画面写 no humans>
+  核心动作：<谁的哪个身体部位接触了什么，先用中文点明接触点，再给 danbooru 短 tag；不得把接触点那句话原样翻成英文塞进 tag（写成 groping / hand on another's waist / torn pantyhose 这类词，句子留给 nl）；词表里没有的动作按规范给的回落阶梯挑词，不得自己拼英文短语；带 another 的词原样照抄，不许改写成 girl's/boy's；同一场互动只写一个主词；物品与环境的互动写成「通用动词 + 物品」短 tag（holding pen、writing、holding smartphone），不拼称谓、another 或 on>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳上面的接触点>
   角色行（每个在场角色各一行）：<角色名>｜表情｜视线｜本镜头可见服装｜临时状态｜个人动作
   场景：<地点 + 画面里实际可见的关键道具>
@@ -780,11 +786,11 @@ E. 选段
    - 具体禁止这三种写法：带问号的自问（「landscape？」「用 blush？」）、并列候选（「expressionless 或 slight smile」）、写完再推翻（「用 A……不过 B 更好，改 A 为 B」）。心里比较完直接写结论，把比较过程留在心里。证据不足时按兜底口径直接定（size 拿不准写 portrait，服装细节不明就选一套常见且自洽的），定了就往下走。
    - 也不要在槽位里附上选择理由或对 danbooru 词表的检索过程（「looking ahead 不在标准列表」这类）——规范给了什么词，直接从里面挑一个填上。
    - 单一瞬间：一块只能是一次快门完整拍下的画面，不要把先后发生的多个动作、多个时间点或因果过程塞进同一块；剧情事实严格按正文，不编造人物、动作或人数。
-   - 表情与视线填后端规范给出的标准 danbooru 词，不写中文感受也不自创词组（想写「温柔地笑」就填 smile）；只能从规范列出的词里挑，规范没列的词一律不许用，拿不准就填 expressionless / looking at another。两项都不得留空，面无表情也要主动填 expressionless。多人画面每人各填一份，落 tag 时各自绑定，不得合并或裸写——裸写的表情只会落到一个人身上，另一人变成默认木脸。画面里根本不出现脸的局部特写（只拍手、腿、脚、道具）写 "-" 即可，不要为了凑齐槽位硬填一个表情。
+   - 表情与视线填后端规范给出的标准 danbooru 词，不写中文感受也不自创词组（想写「温柔地笑」就填 smile）；只能从规范列出的词里挑，规范没列的词一律不许用，拿不准就填 expressionless / looking at viewer（单人画面的视线不许填 looking at another——画面里没有「另一个人」）。两项都不得留空，面无表情也要主动填 expressionless。多人画面每人各填一份，落 tag 时各自绑定，不得合并或裸写——裸写的表情只会落到一个人身上，另一人变成默认木脸。画面里根本不出现脸的局部特写（只拍手、腿、脚、道具）写 "-" 即可，不要为了凑齐槽位硬填一个表情。
    - 若正文明确为显式 NSFW 场景：核心动作与角色行逐人点明镜头中实际可见的性器官、身体部位和接触关系（谁的什么部位接触或进入哪里），落 tag 时用准确 danbooru 词写出；不得只用 nsfw、nude、sex 或含蓄措辞代替关键解剖信息，被衣物、身体或镜头完全遮住的部位不得写成可见。
    - 角色行是每个在场角色各一行，配角也要写全，不许只给主角写完整一行、配角用一句中文动作带过。每一行的表情与视线都必须各是一个独立的英文 danbooru 词：写成「看向另一侧、弯腰换鞋」这种中文短语等于这一行没有表情词，落 tag 时这个角色就会没有表情，被模型画成木脸。锚点只能是正文/设定给出的发色或瞳色：不得从服装、道具的颜色推出发色（写了 yellow jacket 不等于 yellow hair），也不得给没有设定的配角编一个发色当锚点——他没有明确发色就用身份词（man、boy、passerby）或直接裸写他独有的可见特征（yellow jacket、helmet）。
    - 绑定只用在两人及以上同框的画面：单人画面（1girl / 1boy）里所有特征裸写，只有一个主体就没有归属歧义，自我绑定只会白占 token。
-   - 三类词永远不绑定、裸写即可：①生理效果词（sweat、tears、drooling、blush、wet、messy hair）；②状态与接触类动作词（panties aside、hand up skirt、touching crotch、spread legs、penetration、orgasm、groping、fingering、hug from behind、carrying、leaning against another、holding hands、holding arm、kissing、biting、sitting on another's lap）——它们已经说明了谁对谁，接上 on <发色词> 会被读成「这个人身上长出来的东西」；③单人画面里的解剖词（penis、breasts、pussy）。
+   - 三类词永远不绑定、裸写即可：①生理效果词（sweat、tears、drooling、blush、wet、messy hair）；②状态与接触类动作词（panties aside、hand up skirt、touching crotch、spread legs、penetration、orgasm、groping、fingering、hug from behind、carrying、leaning against another、holding hands、holding arm、kissing、biting、sitting on another's lap）——它们已经说明了谁对谁，接上 on <发色词> 会被读成「这个人身上长出来的东西」；③单人画面里的解剖词（penis、breasts、pussy）。on 的适用范围就此封口：它只能接在穿戴件、服饰部件、携带物与解剖部位后面——发色瞳色、表情、视线、效果词后面一律不接。
    - 动作词与部位不许粘成一条：groping 与 breasts on <发色词> 要拆成两条写（动作裸写、部位按绑定写法单列），粘在一起不是 danbooru 词。
    - 可见服装照 C 中该角色当前状态的视觉指纹逐件写全，只写本景别看得见的部件；镜头外不可见的部件可以省略，但省略不等于脱掉，后续重新可见且中间没有变化时必须恢复。槽位里不许退回 school uniform、dress、pantyhose 这种笼统孤立词——C 段定的是 navy school blazer 就写 navy school blazer，写笼统词等于让模型自己重新设计这套衣服，同一角色每张图都会换个款式。同一件服装/饰品的措辞整楼逐字复用：定下哪种说法就都用哪种，不许一张写 thigh high stockings、一张写 pantyhose（连裤与过膝袜不是一件东西，正文写的是哪种就写哪种），也不许在 choker / collar / neck ribbon 之间来回换——同义词改写等于换了件衣服。局部件是补充不是替代：正文提到胸衣时，整件裙装的视觉指纹照旧写全，不能只留一个 corset 把裙子省掉。多人画面每人的服装各写各的，落 tag 时各自绑定：两人都穿校服但男女版型不同，裸写一个 school uniform 会让模型把裙子套到男生身上。
    - 场景和环境光：场景只写正文、上下文或世界设定能支持的事实，地形、地面材质、天气痕迹和环境状态都算事实，没依据就别写；环境光则相反，光源、时间和色调正文不会写，必须由你主动定，缺了画面就是平庸的大头照。
@@ -792,14 +798,14 @@ E. 选段
 第三层｜落笔前自查（只核对，不预写答案）
 
 这一层只逐张核对下面几条，每点写一句结论即可。<thinking> 里禁止出现任何最终答案的草稿——不写完整 tag 串、不写完整 nl 句、更不要写出 JSON 对象或 "JSON:" 之类的标题。答案只在 </thinking> 之后出现一次，在思考里先写一遍等于把整份输出付两遍钱。核对完直接闭合 </thinking> 并输出 JSON：
-   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光（画面里不出现脸的局部特写除外，那种图本就不该有表情词）；要求 nl 时与 tag 描述同一画面；人数 tag 用的是 1boy 1girl / 2boys 1girl / 2girls 这类标准词，没有 2people 这种自造总数，也没有把同一个数量词写两遍——人数与取景框里看得见的人数一致（没被虚化的第三者也算人）。
+   - 每张图的 tag 覆盖了它自己那一块的全部非 "-" 槽位，没有漏掉表情、视线或环境光（画面里不出现脸的局部特写除外，那种图本就不该有表情词）；要求 nl 时与 tag 描述同一画面；人数 tag 用的是 1boy 1girl / 2boys 1girl / 2girls 这类标准词，没有 2people、1man、2men、multiple people 这种自造总数（成年男性也写 boy），也没有把同一个数量词写两遍——人数与取景框里看得见的人数一致（没被虚化的第三者也算人）。
    - 每个剧情 tag 都能追溯到正文/设定；地形、地面、道路、天气和环境状态 tag 没依据就删除。
-   - 绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）；生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on；动作词没有和绑定部位粘成一条；锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色；同一件服装/饰品的措辞与上一张图一致，没有同义词改写，局部件没有把整件衣服挤掉。
+   - 绑定只出现在两人及以上同框的画面里（单人画面全是裸写，没有自我绑定）；生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on——on 只出现在穿戴件、服饰部件与解剖部位后面；单人画面的视线里没有 looking at another；动作词没有和绑定部位粘成一条；锚点都是正文/设定给出的发色或瞳色，没有从服装颜色推出来的发色；同一件服装/饰品的措辞与上一张图一致，没有同义词改写，局部件没有把整件衣服挤掉。
    - 多人画面里服装、体型、物件、表情、视线和个人动作都已绑定到各自角色，没有散落的无主特征；每个在场角色的服装都在 tag 里实际出现了，没有谁的衣服只写在槽位里却没进 tag，也没有 school uniform、pantyhose 这类没主人的笼统孤立词；每个在场角色都各有一个绑定到自己的表情词和视线词，没有谁只有动作没有表情。发色与瞳色的短语保持裸列、没有给自己接 on；表情与视线用称谓前缀绑定、没有用 on 形式。男女同框同样逐件带主人——女方的裙装、丝袜、高跟鞋、妆容、胸部与身高体型、男方的上衣裤子，一个都不能裸写；反过来，互动类动作词（hand on another's…、groping、fingering）本身就说明谁对谁，不加主人、但必须原样取自词表。
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的 tag 串里都有 B 段定下的 character name (copyright name) 身份 tag（人数/构图之后、普通外貌之前，不转义括号），原创角色没有被误加作品名。
    - 若本图是显式 NSFW 场景：实际可见的性器官、身体部位和接触关系都已用准确 tag 写明，没有只用 nsfw、nude、sex 这类泛化词一笔带过；非显式场景本项直接跳过。
-   - 每个在场正式角色都能二选一：指出【角色固定外貌库】中的同名条目，或在 changes 中有 field:"new"；世界书里有详细设定不能代替建档。每条 field:"new" 建档的 hair 都同时带发色和长度/发型、eyes 都带瞳色。永久变化的 P编号合法，临时状态没被误写进 changes。
+   - 每个在场正式角色都能二选一：指出【角色固定外貌库】中的同名条目，或在 changes 中有 field:"new"；世界书里有详细设定不能代替建档。同一角色没有输出第二条 field:"new"。每条 field:"new" 建档的 hair 都同时带发色和长度（不含造型）、eyes 都带瞳色。永久变化的 P编号合法，临时状态没被误写进 changes。
    - 张数在设定范围内；仅当下限为 0 且确实无可画时 images 才为空，且无论如何都保留应有的建档与 changes。`;
 
 /**
@@ -830,10 +836,11 @@ B. 角色清点与建档（具体建档字段与写法见任务协议，这里�
      · 【一次性】正文只给了指称、没有设定、不持续参与剧情的一次性角色——不建档、不写 changes、不进库。这一类**照常可以入画**：入选画面时按后端规范给他写一条仅本图有效的角色块，name 用正文的指称原词，外貌按世界观一次性补全，绝不为他编造人名。
    - 清点名单不是入画名单：这里列全是为了核对在场事实与建档，谁入镜由 E 段按主体和核心互动决定，【一次性】不因缺档被排除，任何角色也不因在场或已建档就必须入画。正文把一群人当作整体的（人群、士兵们、围观的学生），列成一行「人群」即可；选入镜头后才留在 Base，不占角色块，拿不准是个体还是一团时按一团处理。
    - 名字一律用原文（【已建档】【本次建档】两类）：field:"new" 建档的 name 必须与角色卡/世界书/柏宝书/正文中该角色的名字逐字相同，中文名写中文（小雪，不写 Xiaoxue 也不意译）；引用已建档角色时，characters[].name 与 tag/nl 里出现的名字同样照抄档案里的原名字，不得音译、翻译或变体——插件按名字逐字匹配，名字对不上档案或正文，锚定就会断开。【一次性】角色不参与任何匹配，用正文的指称原词作 name 即可，这条不适用于他。
+   - field:"new" 只发给库里确实没有的角色：输出前先在【角色固定外貌库】区块里逐字搜一遍名字——同名条目已经存在，这一行就是【已建档】，照抄库中字段，绝不再输出 field:"new"（重复建档会被插件丢弃，但凭印象重写的外貌已经落进画面，瞳色发色从此漂移；觉得库字段与正文不符时以库为准，差异按临时状态处理，不改档案）。
    - 同一行里顺带判定原创还是同人（仅对【已建档】【本次建档】两类做）：只有角色卡、世界书、正文或通行角色名能可靠指向某个已有作品时才判为同人，证据不足按原创处理，不猜作品。判定为同人时同一行定出最终身份 tag 词：模型可识别的英文 Danbooru 角色名与作品名，格式 character name (copyright name)，不转义圆括号。身份 tag 必须写进档案：本次 field:"new" 建档的写进 fields.fandom；已建档但档案缺 fandom 的补一条 field:"fandom" 的 changes；档案已有 fandom 的直接照抄。画图时逐字放在该角色 characters[].tag 的首位，不得放进 Base。原创角色档案不写 fandom。【一次性】角色不判同人、不写 fandom。
-   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发这类造型是临时状态，不算长期发型），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。【一次性】角色入画时同样要有发色与瞳色，只是补在他的角色块里、不进档案；未入画不补外貌，同一楼里他若出现在两张图，两张用同一套外貌。
+   - 缺发色、发型或瞳色时一次性补全：hair 必须同时带发色和长度（long black hair 行，只写 black hair 这种裸颜色不行；盘发、扎发、丸子头、编发、马尾这类造型是临时状态，不算长期发型，永远不进 hair——画图时按当张正文补），eyes 必须带瞳色；建档在本楼全程有效，不要对同一角色给出两套外貌。【一次性】角色入画时同样要有发色与瞳色，只是补在他的角色块里、不进档案；未入画不补外貌，同一楼里他若出现在两张图，两张用同一套外貌。
    - 对照角色库检查永久变化：染发、剪发、永久变身等写入 changes 并标出生效 P编号；假发、美瞳、湿发、光照变色等临时状态不写。即使 images 为空也不能跳过这一步。
-   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
+   - 建档字段只能写 danbooru 画得出的长期特征：身高体重等数字（178cm、50kg）、气质性格与身份评价（professional cosplayer、gentle handsome type）、临时发型（盘发、扎发、丸子头、编发、马尾）、当前这身衣服（cosplay、制服、礼服）一律不写——档案会被逐字照抄到之后每一张图。
 
 C. 服装时间线（B 段列出的【已建档】【本次建档】角色各一行：从 P 几起穿的是什么）
    - 按正文 P 位置维护每个角色的临时服装：正文未明确初始穿着时合理决定一次；没有穿脱、换装、衣物损坏或场景/时间跳跃就沿用上一状态，明确变化后从对应 P 位置起更新。
@@ -857,7 +864,7 @@ E. 选段
 V5 的一张图 = 一个 Base 块 + 每个本图可见的个体角色各一块，与最终 JSON 的 tag/nl 和 characters[] 一一对应。先写 Base 块，再按从左到右、从上到下的顺序逐个写角色块——这个顺序就是 characters[] 的顺序。角色块按 E 段决定的取景写，与他有没有档案无关：【一次性】角色入画时同样各写一块，镜头外的人不写块，也不补进 Base；入画的人群作为整体留在 Base。
 
 ■ P<编号>｜Base
-  人数：<1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls / no humans；只数本图取景框内可见的人（含没被虚化的第三者：店员、路人、外卖骑手），不数场景里在场但不入画的人；每个数量词只写一次，不得出现 1boy 1girl, 1boy 这种重复>
+  人数：<1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls / no humans；只数本图取景框内可见的人（含没被虚化的第三者：店员、路人、外卖骑手），不数场景里在场但不入画的人；每个数量词只写一次，只用 danbooru 标准词，不写 1man、2men、multiple people 这类自造词（成年男性也写 boy，中年大叔与少年同框写 2boys），不得出现 1boy 1girl, 1boy 这种重复>
   景别：<close-up / upper body / medium shot / full body / wide shot 中只选一个，且必须完整容纳下面的核心互动>
   核心互动：<多人共同参与的那个动作：谁的哪个身体部位接触了什么，先用中文点明接触点，再给英文 tag；单人画面本槽写 "-"，唯一角色的动作是他角色块的个人动作，不进 Base>
   场景：<地点 + 画面里实际可见的关键道具>
@@ -880,7 +887,7 @@ V5 的一张图 = 一个 Base 块 + 每个本图可见的个体角色各一块�
    - **Base 块与角色块的分工是硬边界**：人数、景别、场景、环境光和多人共同参与的互动只进 Base；某一个角色的外貌、服装、表情、视线和个人动作只进他自己那一块，落 JSON 时进他自己的 characters[].tag。绝不能把某人的服装或动作写进 Base，也不能写进别人那一块——V5 靠 Character Prompt 隔离每个人，混进 Base 就等于把这件衣服摊给同框所有人。单人画面唯一角色的动作同样是个人动作：落在他的角色块里，Base 的核心互动槽写 "-"。这条分工对 Base 的 nl 同样成立：Base nl 只写整体场景、空间关系与事件，不写任何单个角色的外貌与服装细节。
    - **不要用邻接绑定**：把特征挂到别人的发色词后面（例如把 white dress 直接接在 green hair girl 后面）是单串 tag 后端的做法，V5 不用。这里每个角色有自己独立的一块，直接写 white dress 即可，归属由所在的块决定。
    - 已入画的个体每人各写一块，配角也要写全，不许只给主角写完整一块、配角用一句中文动作带过。表情与视线必须各是一个独立的英文 danbooru 词：写成「看向另一侧、弯腰换鞋」这种中文短语等于这一块没有表情词，落 JSON 时这个角色就会没有表情，被模型画成木脸。
-   - 表情与视线填后端规范给出的标准 danbooru 词，不写中文感受也不自创词组（想写「温柔地笑」就填 smile）；只能从规范列出的词里挑，规范没列的词一律不许用，拿不准就填 expressionless / looking at another。两项都不得留空，面无表情也要主动填 expressionless。
+   - 表情与视线填后端规范给出的标准 danbooru 词，不写中文感受也不自创词组（想写「温柔地笑」就填 smile）；只能从规范列出的词里挑，规范没列的词一律不许用，拿不准就填 expressionless / looking at viewer（单人画面的视线不许填 looking at another——画面里没有「另一个人」）。两项都不得留空，面无表情也要主动填 expressionless。
    - 若正文明确为显式 NSFW 场景：每个角色镜头中实际可见的性器官与身体部位写进他自己的角色块（落其 characters[].tag），多人共同参与的性行为与整体接触写进 Base 的核心互动，并按后端规范用 source# / target# / mutual# 标明谁施谁受；不得只用 nsfw、nude、sex 泛化词代替关键解剖信息，被完全遮住或画面外的部位不得写成可见。
    - 可见服装照 C 中该角色当前状态的视觉指纹逐件写全，只写本景别看得见的部件；镜头外不可见的部件可以省略，但省略不等于脱掉，后续重新可见且中间没有变化时必须恢复。槽位里不许退回 school uniform、dress、pantyhose 这种笼统孤立词——C 段定的是 navy school blazer 就写 navy school blazer，写笼统词等于让模型自己重新设计这套衣服，同一角色每张图都会换个款式。同一件服装/饰品的措辞整楼逐字复用：定下哪种说法就都用哪种，不许一张写 thigh high stockings、一张写 pantyhose（连裤与过膝袜不是一件东西，正文写的是哪种就写哪种），也不许在 choker / collar / neck ribbon 之间来回换——同义词改写等于换了件衣服。局部件是补充不是替代：正文提到胸衣时，整件裙装的视觉指纹照旧写全，不能只留一个 corset 把裙子省掉。
    - 场景和环境光：场景只写正文、上下文或世界设定能支持的事实，地形、地面材质、天气痕迹和环境状态都算事实，没依据就别写；环境光则相反，光源、时间和色调正文不会写，必须由你主动定，缺了画面就是平庸的大头照。
@@ -894,7 +901,7 @@ V5 的一张图 = 一个 Base 块 + 每个本图可见的个体角色各一块�
    - 这一层只核对、不改决定：发现问题就在落 tag 时直接改对，不要在思考里写出「超限，需精简」「让位」「改为」这类修订过程。张数在 E 段就已经定死，这里不该再变。
    - 每个同人角色的身份 tag 都逐字照抄自档案 fandom 字段、在其 characters[].tag 的首位，没有放进 Base；同人角色的档案都带 fandom（本次建档或 field:"fandom" 补档），原创角色档案没有 fandom、没有被误加作品名。
    - 若本图是显式 NSFW 场景：可见解剖部位都在所属角色的 tag 里、多人共担的性行为与整体接触在 Base，没有只写泛化 NSFW 词；非显式场景本项直接跳过。
-   - 每个在场角色都能三选一：指出【角色固定外貌库】中的同名条目、在 changes 中有 field:"new"、或标为【一次性】（不建档不写 changes，入画时才在他自己的角色块里补外貌）；世界书里有详细设定不能代替建档。每条 field:"new" 建档的 hair 都同时带发色和长度/发型、eyes 都带瞳色。【一次性】角色没有被写进 changes——写进去就是错的。永久变化的 P编号合法，临时状态没被误写进 changes。
+   - 每个在场角色都能三选一：指出【角色固定外貌库】中的同名条目、在 changes 中有 field:"new"、或标为【一次性】（不建档不写 changes，入画时才在他自己的角色块里补外貌）；世界书里有详细设定不能代替建档。同一角色没有输出第二条 field:"new"。每条 field:"new" 建档的 hair 都同时带发色和长度（不含造型）、eyes 都带瞳色。【一次性】角色没有被写进 changes——写进去就是错的。永久变化的 P编号合法，临时状态没被误写进 changes。
    - 画面保持 E 段选定的主体和核心互动，没有为了减人数破坏核心互动，也没有把无关在场者补进画面；缺档未成为放弃画面或裁掉必要参与者的理由。取景框内每个可见的个体都有自己的角色块，入画的人群留在 Base；镜头外的人不写入 tag/nl/characters，Base 人数只计取景框内可见的人。
    - 张数在设定范围内；仅当下限为 0 且确实无可画时 images 才为空，且无论如何都保留应有的建档与 changes。`;
 
@@ -912,16 +919,16 @@ export const DEFAULT_NAI_V5_SPEC = `[NovelAI 4.5/V5 Prompt Specification]
 Map every image to one Base Prompt plus zero or more native Character Prompts.
 
 Each image must contain:
-- tag: English comma-separated danbooru tags for the Base Prompt. Put global character counts, scene, composition, camera, lighting, atmosphere, and shared interactions here. Do not put one character's appearance, outfit, or individual action in Base. Use standard danbooru count words only (1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls) and write each one only once: a third person visible inside the frame makes the count 2boys 1girl, never 1boy 1girl, 1boy.
+- tag: English comma-separated danbooru tags for the Base Prompt. Put global character counts, scene, composition, camera, lighting, atmosphere, and shared interactions here. Do not put one character's appearance, outfit, or individual action in Base. Use standard danbooru count words only (1girl / 1boy / 1boy 1girl / 2girls / 2boys / 2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls) and write each one only once: a third person visible inside the frame makes the count 2boys 1girl, never 1boy 1girl, 1boy. Danbooru has no 1man / 2men / 1woman: adult males are still boys and adult females still girls in counts (a middle-aged man and a boy together make 2boys), and never stack an extra total such as multiple people on top of the count tags.
 - nl: a coherent English natural-language Base Prompt describing the whole scene, spatial relationships, camera, and overall event. Like the Base tag it stays global: never put one character's appearance, outfit, or individual action in the Base nl; those belong to that character's own nl.
 - characters: an array of the characters actually visible in this image, ordered left-to-right then top-to-bottom. Every item is {"name":"...","tag":"...","nl":"..."}. Membership is decided by the frame, not by the library: a character who is visible but has no library profile still gets an entry (see rule 9). Names of library characters must follow the Name consistency rules below.
 
 Character Prompt rules:
-1. tag uses English danbooru tags for that character's identity, sex, fixed appearance, current outfit, expression, gaze, pose, action, visible anatomy, and necessary relative position. Use girl/boy rather than 1girl/2girls; numeric counts belong only in Base. Expression and gaze are mandatory for every character and must use real danbooru tags rather than invented descriptive phrases: pick expressions from smile, grin, laughing, blush, embarrassed, frown, pout, puffy cheeks, surprised, crying, tears, angry, serious, sad, worried, scared, smug, seductive smile, expressionless, half-closed eyes, open mouth, clenched teeth, winking, glaring, staring, tongue out, biting lip, drooling, sweat drop; pick one gaze from looking at viewer, looking at another, looking away, looking down, looking up, looking back, closed eyes. Use the listed words verbatim — never add adjectives, combine them, or invent phrases; anything outside the list only dilutes the prompt. Save adjectival nuance for nl. When the story does not state an expression, infer one; write expressionless explicitly rather than omitting it.
+1. tag uses English danbooru tags for that character's identity, sex, fixed appearance, current outfit, expression, gaze, pose, action, visible anatomy, and necessary relative position. Use girl/boy rather than 1girl/2girls; numeric counts belong only in Base. Expression and gaze are mandatory for every character and must use real danbooru tags rather than invented descriptive phrases: pick expressions from smile, grin, laughing, blush, embarrassed, frown, pout, puffy cheeks, surprised, crying, tears, angry, serious, sad, worried, scared, smug, seductive smile, expressionless, half-closed eyes, open mouth, clenched teeth, winking, glaring, staring, tongue out, biting lip, drooling, sweat drop; pick one gaze from looking at viewer, looking at another, looking away, looking down, looking up, looking back, closed eyes. looking at another is only for frames that actually contain another person; a solo character picks from the rest of the list. Use the listed words verbatim — never add adjectives, combine them, or invent phrases; anything outside the list only dilutes the prompt. Save adjectival nuance for nl. When the story does not state an expression, infer one; write expressionless explicitly rather than omitting it.
 2. First decide whether the named character is an original character or a fandom character. Treat a character as fandom only when the character card, lorebook, story, or an unambiguous well-known name reliably identifies an existing anime, game, novel, or other work. If the work is uncertain, do not guess; treat the character as original.
 3. For every fandom character, the model-recognized English Danbooru identity tag, formatted exactly as character name (copyright name), must be the first tag in that character's tag. The identity tag is stored in the fixed appearance library: when creating the entry (changes field:"new"), register it as the fields.fandom of that entry; when an existing entry lacks it and the character is fandom, add it via a changes item with field:"fandom"; then copy it verbatim every time. Do not escape the parentheses for NovelAI, do not translate the names literally, do not abbreviate the copyright, and do not put this per-character identity tag in Base. Original characters receive no copyright identity tag and no fandom field.
 4. For an explicit NSFW scene. Do not rely on vague tags such as nsfw, nude, or sex: name each actually visible, action-relevant anatomical feature or genital in the owning character's tag, such as breasts, nipples, penis, pussy, anus, or testicles. Do not claim fully covered or out-of-frame anatomy is visible.
-5. Put the shared sexual act and overall contact in Base. Use source# / target# / mutual# tags in Character Prompts when they clarify who acts, which body part is involved, and who or what receives the action. The tags must describe the exact visible contact rather than euphemize it.
+5. Put the shared sexual act and overall contact in Base. Use source# / target# / mutual# tags in Character Prompts when they clarify who acts, which body part is involved, and who or what receives the action. The tags must describe the exact visible contact rather than euphemize it. Interactions with objects or the environment (handing an item over, writing, scanning a code, stepping inside) use a plain verb + object pair such as holding pen, writing, holding smartphone, entering store; never fuse a personal name, another, or on into such tags, and leave direction and detail to nl.
 6. nl uses English natural language for the same character's appearance, outfit, action, facing, interaction, visible anatomy, and approximate position. It may add relationship or spatial detail but must not conflict with tag.
 7. For characters in the fixed appearance library, copy the library Tag fields into that character's tag, keeping the fandom identity tag (fields.fandom) first. Keep appearance wording verbatim, but convert the library sex count tag 1girl/1boy to girl/boy. Library natural-language notes may inform that character's nl. Tag fields remain canonical.
 8. For other multi-character interactions, use NovelAI source# / target# / mutual# tags when they clarify actor and target. Do not use ComfyUI's multi-person segmentation convention.

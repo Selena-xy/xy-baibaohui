@@ -341,7 +341,7 @@ describe('auto tag prompt', () => {
       // 1) 人数 tag 只准用 danbooru 标准词
       expect(all).toContain('一律不要写 2people、3people 这类自造总数');
       expect(all).toContain('不要 2people 这类自造总数');
-      expect(all).toContain('没有 2people 这种自造总数');
+      expect(all).toContain('没有 2people、1man、2men、multiple people 这种自造总数（成年男性也写 boy）');
       // 2) 核心动作必须是 danbooru 短 tag,句子留给 nl。
       //    不再给「before → after」对照:那些反面句子被模型原样照抄进过输出
       //    (实测漏出 "1boy's hand pressing deep into 1girl's waist"),只留正面词表。
@@ -354,7 +354,7 @@ describe('auto tag prompt', () => {
       // 3) 建档字段禁止项:数字/气质评价/临时发型/当前这身衣服
       expect(all).toContain('身高体重等数字（178cm、50kg）');
       expect(all).toContain('professional cosplayer');
-      expect(all).toContain('盘发、扎发这类造型是临时状态，不算长期发型');
+      expect(all).toContain('盘发、扎发、丸子头、编发、马尾这类造型是临时状态，不算长期发型，永远不进 hair——画图时按当张正文补');
       expect(all).toContain('cosplay、制服、礼服等只在某段剧情里穿的服饰');
       expect(all).toContain('留空比写错安全');
       // 4) 身份 tag 圆括号必须加反斜杠转义且全小写无大写,档案与画面 tag 同形态
@@ -552,7 +552,7 @@ describe('auto tag prompt', () => {
       expect(all).toContain('**人数 tag 要覆盖画面里所有可见人物，且每个数量词只写一次**');
       expect(all).toContain('三人同框写 2boys 1girl 或 1boy 2girls');
       expect(all).toContain('2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls');
-      expect(all).toContain('2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，同一个数量词也不许写两遍');
+      expect(all).toContain('2boys 1girl / 1boy 2girls / 2boys 2girls / multiple boys / multiple girls），不要 2people 这类自造总数，也不要 1man、2men、multiple people 这类 danbooru 没有的词（成年男性也写 boy，中年大叔与少年同框写 2boys；覆盖所有人的数量 tag 本身就是总数），同一个数量词也不许写两遍');
       expect(all).toContain('没有把同一个数量词写两遍');
 
       // G) 锚点只能来自正文/设定的发色瞳色,不许从服装颜色推、也不许给配角编。
@@ -610,7 +610,7 @@ describe('auto tag prompt', () => {
         .map(m => m.content)
         .join('\n');
       expect(v5Text).toContain('a third person visible inside the frame makes the count 2boys 1girl, never 1boy 1girl, 1boy');
-      expect(v5Text).toContain('每个数量词只写一次，不得出现 1boy 1girl, 1boy 这种重复');
+      expect(v5Text).toContain('每个数量词只写一次，只用 danbooru 标准词，不写 1man、2men、multiple people 这类自造词（成年男性也写 boy，中年大叔与少年同框写 2boys），不得出现 1boy 1girl, 1boy 这种重复');
       // 绑定那套措辞绝不许漏进 V5(它靠 Character Prompt 隔离,不看邻接)。
       expect(v5Text).not.toContain('绑定只在两人及以上同框时才用');
       expect(v5Text).not.toContain('on green hair girl');
@@ -659,7 +659,7 @@ describe('auto tag prompt', () => {
       //    「每个在场角色都必须有表情词和视线词」压回来。
       expect(on).toContain('本楼额外规则·优先于以上所有条目');
       expect(on).toContain('这些男性不适用');
-      expect(on).toContain('只有男性单独出镜时照常画脸');
+      expect(on).toContain('画面里没有女性时（男性单人出镜或男男同框）照常画脸');
       // 覆盖块必须落在思维链末尾——思维链是最后一条 system,而它通篇要求人人有表情,
       // 覆盖块不压在它末尾就等于没写。按标记取,不依赖消息下标。
       const thinking = onMsgs.find(m => m.content.includes('【输出前思考清单】'))?.content ?? '';
@@ -688,6 +688,102 @@ describe('auto tag prompt', () => {
     expect(messages.some(m => m.content.includes('自定义清单'))).toBe(true);
     expect(messages.some(m => m.content.includes('输出前思考清单'))).toBe(false);
     expect(messages[messages.length - 1].content).toBe('custom>');
+  });
+
+  it('locks the round-6 run fixes: count lexicon, on-scope cap, solo gaze, object actions, reregistration guard, faceless scope', async () => {
+    const options: AutoTagSettings = {
+      enabled: true,
+      contextMessages: 2,
+      minImages: 0,
+      maxImages: 2,
+      retryCount: 1,
+      autoGenerate: true,
+      promptStyle: 'auto',
+      comfySpecNl: false,
+      facelessMale: false,
+      prompts: prompts(),
+    };
+    const oldBackend = settings.defaultBackend;
+    const oldModel = settings.nai.model;
+    try {
+      settings.defaultBackend = 'comfyui';
+      const all = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+
+      // A) 人数词表封口:1man/2men/1woman/multiple people 都是自造词,成年男性也写 boy。
+      expect(all).toContain('danbooru 也没有 1man、2men、1woman 这类词——成年男性同样写 boy');
+      expect(all).toContain('人数之外也不许再叠 multiple people 这类总数词');
+      expect(all).toContain('也不要 1man、2men、multiple people 这类 danbooru 没有的词');
+      expect(all).toContain('没有 2people、1man、2men、multiple people 这种自造总数（成年男性也写 boy）');
+
+      // B) on 的适用范围封口:只接穿戴件/服饰部件/携带物/解剖部位。
+      expect(all).toContain('**on 的适用范围就此封口**：它只能接在「会认错人」的穿戴件、服饰部件、携带物与需要归属的解剖部位后面');
+      expect(all).toContain('on 的适用范围就此封口：它只能接在穿戴件、服饰部件、携带物与解剖部位后面——发色瞳色、表情、视线、效果词后面一律不接');
+      expect(all).toContain('生理效果词、状态与接触类动作词、单人画面的解剖词都没有接 on——on 只出现在穿戴件、服饰部件与解剖部位后面');
+
+      // C) 单人画面不许写 looking at another(第六轮实跑:1boy 特写写了 looking at another)。
+      expect(all).toContain('looking at another 只在画面里确有另一人时使用——单人画面（1girl / 1boy / no humans）里没有「另一个人」');
+      expect(all).toContain('单人画面的视线里没有 looking at another');
+      // 思维链兜底词从 looking at another 改为 looking at viewer(三份思维链同步)。
+      expect(all).toContain('拿不准就填 expressionless / looking at viewer');
+      expect(all).not.toContain('拿不准就填 expressionless / looking at another');
+
+      // D) 物品/环境互动给合法出路:通用动词 + 物品,不拼称谓/another/on。
+      expect(all).toContain('与物品、环境的互动（递接东西、写字签字、扫码出示、掀帘进门、操作机器等）不属于人际互动词表');
+      expect(all).toContain('不许把称谓、another 或 on 拼进物品动作');
+      expect(all).toContain('物品与环境的互动写成「通用动词 + 物品」短 tag');
+
+      // E) 重复建档防御:同名条目存在就绝不再报 field:"new"(第六轮实跑:女柜员建档两次,
+      //    第二次被插件丢弃,但模型凭印象重写的 black eyes 已落进画面,瞳色漂移)。
+      expect(all).toContain('field:"new" 只发给库里确实没有的角色');
+      expect(all).toContain('绝不再输出 field:"new"');
+      expect(all).toContain('同一角色没有输出第二条 field:"new"');
+
+      // F) 建档 hair 只存长度与发色,造型(哪怕长期)不入档;sex 只写 1girl/1boy。
+      expect(all).toContain('也不要写 bun、updo 这类单独的造型值');
+      expect(all).toContain('hair 都同时带发色和长度（不含造型）');
+      expect(all).toContain('sex 只写 1girl / 1boy——成年男性也是 1boy，1man、1woman 不是 danbooru 词');
+      expect(all).toContain('临时发型（盘发、扎发、丸子头、编发、马尾）、当前这身衣服');
+
+      // 两份中文单串规范(ComfyUI / NAI 4)同步改,少一条链路就漏改。
+      settings.defaultBackend = 'nai';
+      settings.nai.model = 'nai-diffusion-4-full';
+      const naiText = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(naiText).toContain('danbooru 也没有 1man、2men、1woman 这类词——成年男性同样写 boy');
+      expect(naiText).toContain('**on 的适用范围就此封口**');
+      expect(naiText).toContain('looking at another 只在画面里确有另一人时使用');
+      expect(naiText).toContain('与物品、环境的互动（递接东西、写字签字、扫码出示、掀帘进门、操作机器等）不属于人际互动词表');
+      expect(naiText).toContain('field:"new" 只发给库里确实没有的角色');
+
+      // NAI V5(英文规范)同步:人数词表/单人视线/物品互动。
+      settings.nai.model = 'nai-diffusion-5-full';
+      const v5Text = (await buildAutoTagMessages(context(), 1, options, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(v5Text).toContain('Danbooru has no 1man / 2men / 1woman');
+      expect(v5Text).toContain('never stack an extra total such as multiple people');
+      expect(v5Text).toContain('a solo character picks from the rest of the list');
+      expect(v5Text).toContain('never fuse a personal name, another, or on into such tags');
+      expect(v5Text).toContain('field:"new" 只发给库里确实没有的角色');
+
+      // G) 无面男适用范围收敛:只有男女同框生效,男男同框照常画脸
+      //    (第六轮实跑:男男同框的图 fm 时有时无,同一楼三张里两张有、一张没有——
+      //    规则没定义男男场景,模型只能乱猜;按规则目的「把焦点让给女性」定为不适用)。
+      const facelessOptions = { ...options, facelessMale: true };
+      const on = (await buildAutoTagMessages(context(), 1, facelessOptions, null))
+        .map(m => m.content)
+        .join('\n');
+      expect(on).toContain('与女性同框的男性角色一律不画脸（同框的都是男性时照常画脸——这条规则的目的就是把焦点让给女性）');
+      expect(on).toContain('男女同框时只要人数 tag 里有 1boy');
+      expect(on).toContain('画面里没有女性时（男性单人出镜或男男同框）照常画脸');
+      expect(on).not.toContain('只有男性单独出镜时照常画脸');
+    } finally {
+      settings.defaultBackend = oldBackend;
+      settings.nai.model = oldModel;
+    }
   });
 
   // 思维链按后端各存一份。改 ComfyUI 那份不能影响 NAI——共用一份正是 V5 被要求填

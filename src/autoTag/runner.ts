@@ -25,6 +25,7 @@ import {
   type CharTagField,
 } from '@/state/charTags';
 import { injectImageTags, parseImagePlan, type ImagePlan } from '@/autoTag/protocol';
+import { lintImagePlan } from '@/autoTag/taglint';
 import { clearAutoGenerateForFloor, markForAutoGenerate } from '@/floor/autoGenerate';
 import { applyMessageText, type ApplyMessageResult } from '@/st/messageEdit';
 import { getContext, isAiStoryMessage, type STMessage } from '@/st/context';
@@ -350,6 +351,13 @@ async function runForFloor(floor: number, opts: RunOptions = {}): Promise<void> 
         '柏宝绘自动 tag 失败',
       );
       return;
+    }
+
+    // 确定性守卫(§0.10 第七轮):模型输出先过一遍机械修正(fm 裸写/剥非法 on/同 tag 去重/
+    // 单串模式 nl 去中文)再写回楼层——七轮提示词回归后这四类仍跨模型复发,代码说了算。
+    const lintRes = lintImagePlan(plan.images, { floor });
+    if (lintRes.fixed) {
+      console.info(`[柏宝绘] 第 ${floor} 楼 tag lint 修正 ${lintRes.fixed} 处: ${lintRes.details.join('; ')}`);
     }
 
     const planOps = planChangeOps(plan);

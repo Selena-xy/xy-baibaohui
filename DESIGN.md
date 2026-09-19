@@ -142,6 +142,22 @@
 
 > 观察：`hair in a bun` 这类长短语形态仍偶发（danbooru 形态是 hair bun），暂不动；nl 收尾句依旧稀疏（连续第三轮观察项）。SFW 场景今后要固定采样——前六轮的回归样本全是 NSFW 剧情,ladder 类规则在 SFW 下没有压力测试。
 
+### 0.11 tag 确定性守卫（v0.2.10）
+
+0.2.9 之后在「联姻妻子」卡用 tavern-tanuki MCP 实跑了 4 层做验证：第七轮四类修复里「男性表情抑制」开始生效，但 `faceless male on <锚点>`（4/4→1/1 依旧）与同色瞳色重复仍跨模型复发，还新见到 `serious on <称谓>` 回潮与 nl 混入中文（「清冷」）。同时确认：tag 走的是柏宝绘副 API 指派渠道（gg1 = gemini-3-flash-preview，pro 档合规更好但 tag 阶段 72s）。
+
+结论：提示词层收益已尽，改用**代码层确定性守卫**——`src/autoTag/taglint.ts` 在 `parseImagePlan` 之后、写回楼层之前对全部图片做机械修正（零语义判断）：
+
+1. `faceless male on <称谓>` → 裸 `faceless male`；
+2. 表情/视线/生理效果词后面的 ` on <称谓>` 截断（unanchored,称谓前缀形态一并覆盖；词本身保留）；
+3. head 以 hair/eyes 结尾的短语接 on → 截断（`black eyes on X` → `black eyes`）；
+4. 完全同名 tag 去重（同色瞳色每人一份落在这条上）；
+5. 单串模式（comfy/NAI4）tag 与 nl 的 CJK 字符剥除——**V5 形态（characters 非空）跳过 nl 的 CJK 剥除**，因为 V5 规范要求角色名保持中文原文。
+
+白名单内的合法绑定（`white dress on X`、`penis on X`、`large breasts on X`）不受影响——head 不是 hair/eyes、左侧词不在裸写词表。修正走 `console.info` 留痕（`tag lint 修正 N 处`），不弹 toast。
+
+> 教训升级：§0.8 的「代码守卫挡得住档案走样」在此推广到出图链路——**凡是能用确定性规则表达的规范，最终都要落到代码里；提示词只负责把模型往正确方向推，不负责兜底**。配合渠道指派可自由权衡：flash 档（快 ~30s）+ lint 兜底，或 pro 档（慢 ~72s）+ lint 双保险。
+
 ## 1. 插件目标
 
 柏宝绘在 SillyTavern 生成新的 AI 正文后，发起一次与正文生成相互独立的 AI 请求，用它完成以下工作：
